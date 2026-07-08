@@ -38,6 +38,7 @@
   .ex-card { background: #1a1a1a; border-radius: 10px; padding: 12px; border: 1px solid #2a2a2a; margin-bottom: 8px; }
   .ex-name { font-weight: 700; font-size: 14px; color: #fff; }
   .ex-note { font-size: 12px; color: #777; margin-top: 2px; }
+  .muscle-tag { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; margin-top: 4px; display: inline-block; margin-right: 3px; }
   .log-btn { background: none; border: 1px dashed #333; border-radius: 6px; padding: 4px 10px; font-size: 12px; color: #555; cursor: pointer; display: flex; align-items: center; gap: 4px; margin-top: 8px; }
   .log-row { display: flex; gap: 6px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
   .log-input { width: 80px; padding: 4px 8px; background: #111; border-radius: 6px; color: #fff; font-size: 13px; border: 1px solid #555; }
@@ -62,12 +63,12 @@
   select.input-field { cursor: pointer; }
   textarea.input-field { resize: vertical; font-family: monospace; font-size: 11px; line-height: 1.5; }
   .btn { padding: 11px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; color: #fff; }
-  .btn-orange { background: #e85d04; }
-  .btn-green { background: #2b9348; }
-  .btn-blue { background: #1d6fa4; }
-  .btn-gray { background: #222; color: #888; }
+  .btn-orange { background: #e85d04; } .btn-green { background: #2b9348; } .btn-blue { background: #1d6fa4; } .btn-gray { background: #222; color: #888; }
   .btn-full { width: 100%; display: block; }
-  .group-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: #666; margin: 12px 0 6px; padding: 4px 0; border-bottom: 1px solid #222; }
+  .group-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: #666; padding: 4px 0; margin: 14px 0 6px; border-bottom: 1px solid #222; }
+  .vol-summary { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .vol-pill { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+  .hyp-banner { background: #1a0a2e; border: 1px solid #7c7cff44; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; font-size: 12px; color: #c084fc; line-height: 1.6; }
   .hidden { display: none; }
 </style>
 </head>
@@ -82,7 +83,7 @@
         <span class="logo">FORGE</span>
         <span class="logo-sub">10-Week Program</span>
       </div>
-      <div class="subtitle">Strength · Hypertrophy · Conditioning — Wave Loading</div>
+      <div class="subtitle">Strength · Hypertrophy · Leg Growth — Wave Loading</div>
     </div>
     <span class="save-badge">💾 Auto-saving</span>
   </div>
@@ -113,18 +114,9 @@
     <p style="color:#888;font-size:13px;margin-bottom:16px;">Estimate your one-rep max and save it to auto-fill working weights.</p>
     <div class="card" style="margin-bottom:16px;">
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;">
-        <div>
-          <label style="font-size:11px;color:#888;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px;">Lift</label>
-          <select id="calc-lift" class="input-field" style="padding:9px 10px;"></select>
-        </div>
-        <div>
-          <label style="font-size:11px;color:#888;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px;">Weight (lbs)</label>
-          <input type="number" id="calc-weight" placeholder="225" class="input-field" style="padding:9px 10px;">
-        </div>
-        <div>
-          <label style="font-size:11px;color:#888;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px;">Reps Done</label>
-          <input type="number" id="calc-reps" placeholder="5" min="1" max="20" class="input-field" style="padding:9px 10px;">
-        </div>
+        <div><label style="font-size:11px;color:#888;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px;">Lift</label><select id="calc-lift" class="input-field" style="padding:9px 10px;"></select></div>
+        <div><label style="font-size:11px;color:#888;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px;">Weight (lbs)</label><input type="number" id="calc-weight" placeholder="225" class="input-field" style="padding:9px 10px;"></div>
+        <div><label style="font-size:11px;color:#888;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px;">Reps Done</label><input type="number" id="calc-reps" placeholder="5" min="1" max="20" class="input-field" style="padding:9px 10px;"></div>
       </div>
       <button class="btn btn-orange btn-full" onclick="calculateORM()">Calculate 1RM</button>
       <div id="calc-result" class="hidden" style="margin-top:14px;padding:14px;background:#111;border-radius:10px;border:1px solid #e85d0444;">
@@ -163,7 +155,7 @@
     <h3 style="color:#fff;font-size:18px;font-weight:800;margin-bottom:6px;">Backup & Restore</h3>
     <div style="padding:12px 14px;background:#0a2a0a;border:1px solid #2b934888;border-radius:10px;margin-bottom:16px;">
       <div style="font-size:13px;font-weight:700;color:#4ade80;">✅ Data auto-saves to this browser</div>
-      <p style="font-size:12px;color:#888;margin-top:4px;line-height:1.6;">Your 1RMs and logged weights are saved automatically in your browser's local storage. Use the manual backup below to transfer data to another device.</p>
+      <p style="font-size:12px;color:#888;margin-top:4px;line-height:1.6;">Your 1RMs and logged weights save automatically. Use manual backup to transfer to another device.</p>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
       <div class="card" style="cursor:pointer;" onclick="showExport()">
@@ -176,28 +168,24 @@
         <div style="font-size:24px;margin-bottom:6px;">📥</div>
         <div style="font-size:14px;font-weight:800;color:#4da6ff;margin-bottom:4px;">Restore My Data</div>
         <div style="font-size:12px;color:#888;">Paste a saved backup</div>
-        <div style="font-size:11px;color:#555;margin-top:8px;">From another device</div>
       </div>
     </div>
     <div id="export-panel" class="card hidden" style="border:1px solid #2b934866;margin-bottom:12px;">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
-        <div>
-          <div style="font-size:14px;font-weight:700;color:#fff;">Your Backup Code</div>
-          <div style="font-size:12px;color:#888;margin-top:2px;">Copy ALL of this and save it somewhere safe</div>
-        </div>
+        <div><div style="font-size:14px;font-weight:700;color:#fff;">Your Backup Code</div><div style="font-size:12px;color:#888;margin-top:2px;">Copy ALL of this and save it</div></div>
         <button class="btn btn-orange" id="copy-btn" style="padding:9px 16px;font-size:13px;" onclick="copyBackup()">Copy All</button>
       </div>
       <textarea id="export-text" class="input-field" rows="5" readonly onclick="this.select()"></textarea>
       <div style="margin-top:10px;">
-        <div style="font-size:12px;color:#777;margin-bottom:4px;">1. Tap the text above to select it, then tap Copy All</div>
-        <div style="font-size:12px;color:#777;margin-bottom:4px;">2. Paste into Notes, Messages, or email to yourself</div>
+        <div style="font-size:12px;color:#777;margin-bottom:4px;">1. Tap the text above to select, then Copy All</div>
+        <div style="font-size:12px;color:#777;margin-bottom:4px;">2. Paste into Notes or email yourself</div>
         <div style="font-size:12px;color:#777;">3. Next time: Restore My Data → paste it back</div>
       </div>
     </div>
     <div id="import-panel" class="card hidden" style="border:1px solid #1d6fa466;margin-bottom:12px;">
       <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px;">Paste Your Backup Code</div>
-      <div style="font-size:12px;color:#888;margin-bottom:10px;">Paste the full backup text you saved previously</div>
-      <textarea id="import-text" class="input-field" rows="5" placeholder='Paste backup here...'></textarea>
+      <div style="font-size:12px;color:#888;margin-bottom:10px;">Paste the full backup text saved previously</div>
+      <textarea id="import-text" class="input-field" rows="5" placeholder="Paste backup here..."></textarea>
       <div style="display:flex;gap:10px;margin-top:12px;">
         <button class="btn btn-blue" style="flex:1;" onclick="restoreBackup()">Restore Data</button>
         <button class="btn btn-gray" onclick="hideImport()">Cancel</button>
@@ -209,9 +197,9 @@
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
-// PROGRAM DATA
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════════
 const MAIN_LIFTS = ["Back Squat","Deadlift","Bench Press","Overhead Press","Front Squat"];
 
 const WAVES = [
@@ -227,158 +215,194 @@ const WAVES = [
   {week:10,label:"Week 10 — Test & Deload",sets:1,reps:"1",pct:1.00,deload:true,test:true},
 ];
 
-// Accessory groups: each exercise has a group label for visual separation
+const MT = {
+  Q:  {label:"Quads",     bg:"#1a2e4a", color:"#60a5fa"},
+  H:  {label:"Hamstrings",bg:"#2a1a3a", color:"#c084fc"},
+  G:  {label:"Glutes",    bg:"#3a1a2a", color:"#f472b6"},
+  C:  {label:"Core",      bg:"#1a2a1a", color:"#4ade80"},
+  Bi: {label:"Biceps",    bg:"#2a1a0a", color:"#fb923c"},
+  Tr: {label:"Triceps",   bg:"#0a2a2a", color:"#2dd4bf"},
+  Sh: {label:"Shoulders", bg:"#2a2a0a", color:"#facc15"},
+  Ch: {label:"Chest",     bg:"#2a0a0a", color:"#f87171"},
+  Bk: {label:"Back",      bg:"#0a1a2a", color:"#38bdf8"},
+};
+function mtag(k){ const m=MT[k]; return `<span class="muscle-tag" style="background:${m.bg};color:${m.color};">${m.label}</span>`; }
+
 const DAYS = [
-  // ── MONDAY: Lower Body — Squat Dominant ──
+
+  // ── MONDAY: Lower Body — Squat / Quad ──────────────────────
   {
-    day:"Monday", type:"Lower Body", focus:"Squat-Dominant",
+    day:"Monday", type:"Lower Body", focus:"Quad-Dominant Strength",
     color:"#e85d04", icon:"🦵", mainLift:"Back Squat",
+    volSummary:[
+      {label:"Quads",color:"#60a5fa"},{label:"Glutes",color:"#f472b6"},{label:"Core",color:"#4ade80"}
+    ],
     accessory:[
-      // Squat
-      {group:"Squat Accessory", name:"Front Squat", sets:3, reps:"5", note:"65% of Front Squat 1RM", liftKey:"Front Squat", pct:0.65},
-      {name:"Bulgarian Split Squat (DB)", sets:3, reps:"10 each", note:"Heavy DBs, each leg"},
-      {name:"KB Goblet Squat", sets:3, reps:"12", note:"Tempo 3-1-1, pause at bottom"},
-      // Posterior chain
-      {group:"Posterior Chain", name:"Romanian Deadlift (Barbell)", sets:3, reps:"10", note:"Full ROM, slow eccentric"},
-      {name:"Cable Pull-Through", sets:3, reps:"15", note:"Hip hinge focus, squeeze glutes"},
-      // Core
-      {group:"Core", name:"Hanging Knee Raises", sets:3, reps:"15", note:"Control the movement, no swinging"},
-      {name:"Ab Wheel Rollout", sets:3, reps:"10", note:"Full extension, brace hard"},
-      {name:"Plank", sets:3, reps:"45 sec", note:"Hollow body position, squeeze everything"},
+      {group:"Quad Strength",
+       name:"Front Squat", sets:4, reps:"5", note:"65% of Front Squat 1RM — upright torso, elbows high", liftKey:"Front Squat", pct:0.65, muscles:["Q"]},
+      {name:"Hack Squat (Machine)", sets:4, reps:"10", note:"Full depth, 3-sec eccentric, shoulder-width stance", muscles:["Q","G"]},
+      {name:"Leg Press (Machine)", sets:3, reps:"12", note:"High foot placement = more glute; low = more quad", muscles:["Q","G","H"]},
+      {name:"Leg Extension (Machine)", sets:4, reps:"15", note:"Full ROM, squeeze hard at top, slow eccentric", muscles:["Q"]},
+      {group:"Glute Accessory",
+       name:"Barbell Hip Thrust", sets:4, reps:"12", note:"1-sec pause at top, drive through heels", muscles:["G"]},
+      {name:"KB Single-Leg RDL", sets:3, reps:"10 each", note:"Deep hinge, feel the hamstring stretch, control the descent", muscles:["H","G"]},
+      {group:"Core",
+       name:"Hanging Knee Raises", sets:3, reps:"15", note:"No swinging, pause at top", muscles:["C"]},
+      {name:"Ab Wheel Rollout", sets:3, reps:"10", note:"Full extension, brace hard", muscles:["C"]},
+      {name:"Plank", sets:3, reps:"45 sec", note:"Hollow body — squeeze glutes and abs", muscles:["C"]},
     ],
     conditioning:{
-      format:"EMOM 12 min", desc:"Every Minute On the Minute × 12",
-      workouts:["Min 1: 8 Power Cleans (moderate)","Min 2: 12 Box Jumps (24\"/20\")","Min 3: 10 KB Swings (heavy)"],
-      equipment:"Barbell, KB, Box", intensity:"Moderate"
+      format:"10-Min Finisher", desc:"EMOM 10 min — Low Impact",
+      workouts:["Min 1: 10 KB Swings (moderate)","Min 2: 8 Box Jumps (24\"/20\")","Repeat for 10 minutes — controlled effort, not a sprint"],
+      equipment:"KB, Box", intensity:"Light", duration:"~10 min"
     }
   },
 
-  // ── TUESDAY: Upper Body — Press + Triceps ──
+  // ── TUESDAY: Upper Body — Press + Chest + Triceps ──────────
   {
-    day:"Tuesday", type:"Upper Body", focus:"Press + Triceps",
+    day:"Tuesday", type:"Upper Body", focus:"Chest · Shoulders · Triceps — Hypertrophy",
     color:"#2b9348", icon:"💪", mainLift:"Bench Press",
+    hypertrophyNote:"All upper body work is 8–15 reps with 60–90 sec rest. Focus on the muscle, not the weight. Slow eccentrics (3 sec down), full ROM, feel every rep.",
+    volSummary:[
+      {label:"Chest",color:"#f87171"},{label:"Shoulders",color:"#facc15"},{label:"Triceps",color:"#2dd4bf"},{label:"Core",color:"#4ade80"}
+    ],
     accessory:[
-      // Press
-      {group:"Press Accessory", name:"Overhead Press (Barbell)", sets:3, reps:"6", note:"70% of OHP 1RM", liftKey:"Overhead Press", pct:0.70},
-      {name:"DB Incline Press", sets:3, reps:"10", note:"Full ROM, controlled eccentric"},
-      {name:"DB Lateral Raises", sets:4, reps:"15", note:"Slow and controlled, slight forward lean"},
-      // Triceps
-      {group:"Triceps", name:"Close-Grip Bench Press", sets:3, reps:"10", note:"Elbows tucked, full ROM"},
-      {name:"Cable Tricep Pushdown (Rope)", sets:3, reps:"12", note:"Full extension, squeeze at bottom"},
-      {name:"Overhead DB Tricep Extension", sets:3, reps:"12", note:"Both hands on one DB, elbows tight"},
-      {name:"Tricep Dips (Bodyweight/Weighted)", sets:3, reps:"10-12", note:"Upright torso for tricep focus"},
-      // Core
-      {group:"Core", name:"Cable Crunch", sets:3, reps:"15", note:"Round through the spine, slow eccentric"},
-      {name:"Russian Twists (KB)", sets:3, reps:"20 total", note:"Feet elevated, controlled rotation"},
+      {group:"Chest",
+       name:"DB Incline Press", sets:4, reps:"10-12", note:"3-sec eccentric — full stretch at bottom, drive up explosively", muscles:["Ch","Sh"]},
+      {name:"DB Flat Press", sets:4, reps:"10-12", note:"Elbows at 45°, touch chest, full lockout", muscles:["Ch","Tr"]},
+      {name:"Cable Chest Fly (Low-to-High)", sets:3, reps:"15", note:"Arms slightly bent, squeeze at peak — pure chest isolation", muscles:["Ch"]},
+      {name:"DB Chest Fly (Flat)", sets:3, reps:"12", note:"Deep stretch, feel the pec lengthening, controlled return", muscles:["Ch"]},
+      {group:"Shoulders",
+       name:"Overhead Press (Barbell)", sets:3, reps:"8", note:"70% of OHP 1RM — strict press, control the descent", liftKey:"Overhead Press", pct:0.70, muscles:["Sh","Tr"]},
+      {name:"DB Lateral Raises", sets:4, reps:"15", note:"Lead with elbow, slight lean forward, pause at top", muscles:["Sh"]},
+      {name:"DB Front Raise", sets:3, reps:"12", note:"Alternate arms, thumbs up, controlled", muscles:["Sh"]},
+      {group:"Triceps",
+       name:"Close-Grip Bench Press", sets:3, reps:"10", note:"Elbows tucked, full ROM — feel the tricep load at lockout", muscles:["Tr","Ch"]},
+      {name:"Cable Tricep Pushdown (Rope)", sets:4, reps:"12", note:"Split rope at bottom, full extension, elbows pinned to sides", muscles:["Tr"]},
+      {name:"Overhead DB Tricep Extension", sets:3, reps:"12", note:"Both hands on one DB — full stretch overhead, elbows tight", muscles:["Tr"]},
+      {group:"Core",
+       name:"Cable Crunch", sets:3, reps:"15", note:"Round through the spine, slow eccentric", muscles:["C"]},
+      {name:"Russian Twists (KB)", sets:3, reps:"20 total", note:"Feet elevated, controlled rotation each side", muscles:["C"]},
     ],
     conditioning:{
-      format:"For Time", desc:"3 Rounds For Time (cap: 18 min)",
-      workouts:["15 Push-Ups","10 DB Thrusters (35/25 lb)","15 KB Swings","200m Ski-Erg"],
-      equipment:"DB, KB, Ski-Erg", intensity:"Hard"
+      format:"12-Min Finisher", desc:"AMRAP 12 min — Upper Body Pump",
+      workouts:["10 Push-Ups","10 DB Shoulder Press (light)","10 Tricep Dips (bodyweight)","Rest as needed — keep moving at a comfortable pace"],
+      equipment:"DB, Dip bars", intensity:"Light", duration:"~12 min"
     }
   },
 
-  // ── THURSDAY: Lower Body — Hinge Dominant ──
+  // ── THURSDAY: Lower Body — Hinge / Hamstring / Glute ───────
   {
-    day:"Thursday", type:"Lower Body", focus:"Hinge-Dominant",
+    day:"Thursday", type:"Lower Body", focus:"Hamstring & Glute Dominant",
     color:"#7b2d8b", icon:"🔩", mainLift:"Deadlift",
+    volSummary:[
+      {label:"Hamstrings",color:"#c084fc"},{label:"Glutes",color:"#f472b6"},{label:"Core",color:"#4ade80"}
+    ],
     accessory:[
-      // Hinge
-      {group:"Hinge Accessory", name:"Romanian Deadlift (Barbell)", sets:4, reps:"8", note:"65% of Deadlift 1RM, slow eccentric"},
-      {name:"Barbell Hip Thrust", sets:4, reps:"10", note:"Full hip extension, 1-sec pause at top"},
-      {name:"KB Single-Leg RDL", sets:3, reps:"10 each", note:"Hinge deep, feel the stretch"},
-      // Quad/accessory
-      {group:"Quad Finisher", name:"Leg Press (Machine)", sets:3, reps:"12", note:"Shoulder-width foot position, full ROM"},
-      {name:"Seated Leg Curl (Machine)", sets:3, reps:"12", note:"Full ROM, pause at contraction"},
-      {name:"Walking Lunges (DB)", sets:3, reps:"20 total", note:"Long stride, upright torso"},
-      // Core
-      {group:"Core", name:"Deadbug", sets:3, reps:"10 each side", note:"Lower back flat to floor throughout"},
-      {name:"Pallof Press (Cable)", sets:3, reps:"12 each side", note:"Anti-rotation, slow and controlled"},
-      {name:"Weighted Sit-Ups", sets:3, reps:"15", note:"Hold plate at chest or overhead"},
+      {group:"Hamstring Strength",
+       name:"Romanian Deadlift (Barbell)", sets:4, reps:"8", note:"65% of Deadlift 1RM — push hips back, deep stretch", liftKey:"Deadlift", pct:0.65, muscles:["H","G"]},
+      {name:"Lying Leg Curl (Machine)", sets:4, reps:"12", note:"Full ROM, 1-sec hold at contraction, slow eccentric", muscles:["H"]},
+      {name:"Seated Leg Curl (Machine)", sets:3, reps:"15", note:"Different angle — squeeze hard at peak", muscles:["H"]},
+      {name:"Nordic Curl (or Banded)", sets:3, reps:"6-8", note:"Eccentric focus — lower as slowly as possible", muscles:["H"]},
+      {group:"Glute Isolation",
+       name:"Barbell Hip Thrust", sets:5, reps:"10", note:"Full extension, 1-sec squeeze at top, drive through heels", muscles:["G"]},
+      {name:"Cable Kickback", sets:3, reps:"15 each", note:"Ankle cuff — squeeze the glute hard at peak, no hip swing", muscles:["G"]},
+      {name:"Hip Abductor (Machine)", sets:3, reps:"20", note:"Slow reps, feel the outer glute working", muscles:["G"]},
+      {name:"Hip Adductor (Machine)", sets:3, reps:"20", note:"Full ROM, controlled squeeze at peak", muscles:["G","H"]},
+      {group:"Core",
+       name:"Deadbug", sets:3, reps:"10 each side", note:"Lower back flat to floor throughout, move slowly", muscles:["C"]},
+      {name:"Pallof Press (Cable)", sets:3, reps:"12 each side", note:"Anti-rotation — resist the cable, stand tall", muscles:["C"]},
+      {name:"Weighted Sit-Ups", sets:3, reps:"15", note:"Hold plate at chest, full ROM", muscles:["C"]},
     ],
     conditioning:{
-      format:"AMRAP 15 min", desc:"As Many Rounds As Possible × 15 min",
-      workouts:["8 Hang Power Cleans (moderate)","10 Box Step-Overs (24\"/20\" + DBs)","300m Row","15 KB Swings"],
-      equipment:"Barbell, DB, Box, KB, Rower", intensity:"Hard"
+      format:"10-Min Finisher", desc:"EMOM 10 min — Glute & Posterior Chain",
+      workouts:["Min 1: 12 KB Swings (moderate — hip hinge focus)","Min 2: 10 Bodyweight Hip Thrusts (slow, squeeze)","Repeat for 10 minutes — this is recovery work, not cardio"],
+      equipment:"KB", intensity:"Light", duration:"~10 min"
     }
   },
 
-  // ── FRIDAY: Upper Body — OHP + Biceps ──
+  // ── FRIDAY: Upper Body — Back + Biceps ─────────────────────
   {
-    day:"Friday", type:"Upper Body", focus:"Pull + Biceps",
+    day:"Friday", type:"Upper Body", focus:"Back · Biceps · Rear Delts — Hypertrophy",
     color:"#1d6fa4", icon:"🏋️", mainLift:"Overhead Press",
+    hypertrophyNote:"All upper body work is 8–15 reps with 60–90 sec rest. Focus on the mind-muscle connection — feel the back and biceps doing the work on every pull. Slow eccentrics, full ROM.",
+    volSummary:[
+      {label:"Back",color:"#38bdf8"},{label:"Biceps",color:"#fb923c"},{label:"Shoulders",color:"#facc15"}
+    ],
     accessory:[
-      // Back / pull
-      {group:"Back & Pull", name:"Bench Press (Supplemental)", sets:3, reps:"6", note:"70% of Bench 1RM, touch-and-go", liftKey:"Bench Press", pct:0.70},
-      {name:"DB Bent-Over Row", sets:4, reps:"10", note:"Each arm, elbow to hip, full ROM"},
-      {name:"Cable Seated Row", sets:3, reps:"12", note:"Elbows tucked, full retraction and stretch"},
-      {name:"Cable Face Pull", sets:3, reps:"15", note:"External rotation at peak, elbows high"},
-      {name:"KB Farmer's Carry", sets:4, reps:"40m", note:"Heavy, stand tall, grip focus"},
-      // Biceps
-      {group:"Biceps", name:"Barbell Curl", sets:4, reps:"10", note:"Full ROM, no swinging, slow eccentric"},
-      {name:"Incline DB Curl", sets:3, reps:"12", note:"Bench at 45°, full stretch at bottom"},
-      {name:"Cable Hammer Curl", sets:3, reps:"12", note:"Rope attachment, neutral grip, squeeze at top"},
-      {name:"Concentration Curl (DB)", sets:3, reps:"12 each", note:"Elbow on inner thigh, peak contraction"},
+      {group:"Back Thickness",
+       name:"Bench Press (Supplemental)", sets:3, reps:"8", note:"70% of Bench 1RM — controlled, bar speed focus", liftKey:"Bench Press", pct:0.70, muscles:["Ch","Tr"]},
+      {name:"DB Bent-Over Row", sets:4, reps:"10-12", note:"Each arm — full ROM, elbow to hip, 1-sec hold at top", muscles:["Bk"]},
+      {name:"Cable Seated Row", sets:4, reps:"12", note:"Full stretch forward, full retraction — feel both ends of the ROM", muscles:["Bk"]},
+      {name:"DB Single-Arm Row (Braced)", sets:3, reps:"12 each", note:"Brace on bench — heavy, pull elbow to ceiling", muscles:["Bk"]},
+      {group:"Back Width & Rear Delts",
+       name:"Cable Face Pull", sets:4, reps:"15", note:"Elbows high, external rotation at peak — shoulder health priority", muscles:["Sh","Bk"]},
+      {name:"DB Rear Delt Fly", sets:3, reps:"15", note:"Bend 45° forward, arms arc back — slow and controlled", muscles:["Sh","Bk"]},
+      {name:"KB Farmer's Carry", sets:4, reps:"40m", note:"Heavy — stand tall, grip and trap focus", muscles:["Bk"]},
+      {group:"Biceps",
+       name:"Barbell Curl", sets:4, reps:"10", note:"Full ROM, no swinging, 3-sec eccentric — supinate at top", muscles:["Bi"]},
+      {name:"Incline DB Curl", sets:3, reps:"12", note:"Bench at 45° — maximize the stretch at the bottom", muscles:["Bi"]},
+      {name:"Cable Hammer Curl (Rope)", sets:3, reps:"12", note:"Neutral grip — brachialis and brachioradialis focus", muscles:["Bi"]},
+      {name:"Concentration Curl (DB)", sets:3, reps:"12 each", note:"Elbow on inner thigh — peak contraction, squeeze hard", muscles:["Bi"]},
     ],
     conditioning:{
-      format:"Interval", desc:"5 Rounds — 45 sec ON / 15 sec OFF",
-      workouts:["Assault Bike (all-out sprint)","Rest 2 min between rounds","Finisher: 3×10 Hang Power Snatch (light-moderate)"],
-      equipment:"Assault Bike, Barbell", intensity:"Light-Moderate"
+      format:"12-Min Finisher", desc:"AMRAP 12 min — Low Intensity",
+      workouts:["10 DB Bicep Curls (light)","10 Cable Face Pulls","200m Row (easy pace)","Rest as needed — this is a flush, not a workout"],
+      equipment:"DB, Cable, Rower", intensity:"Light", duration:"~12 min"
     }
   },
 
-  // ── SATURDAY: Full Body — High Volume ──
+  // ── SATURDAY: Lower Body — Pure Hypertrophy ────────────────
   {
-    day:"Saturday", type:"Full Body", focus:"High Volume — Strength & Hypertrophy",
+    day:"Saturday", type:"Lower Body", focus:"Pure Hypertrophy — Quads · Hamstrings · Glutes",
     color:"#c9184a", icon:"🔥", mainLift:"Back Squat",
-    mainLiftNote:"Speed/technique focus @ 60-65% — bar speed is the priority",
+    mainLiftNote:"Speed & volume focus @ 65% — bar speed, perfect form, no grinding",
+    volSummary:[
+      {label:"Quads",color:"#60a5fa"},{label:"Hamstrings",color:"#c084fc"},{label:"Glutes",color:"#f472b6"}
+    ],
     accessory:[
-      // Compound strength
-      {group:"Compound Strength", name:"Power Clean (Barbell)", sets:5, reps:"3", note:"Technical focus, 70-75% of Clean 1RM"},
-      {name:"Push Press (Barbell)", sets:5, reps:"5", note:"70% OHP 1RM — drive from legs", liftKey:"Overhead Press", pct:0.70},
-      {name:"Sumo Deadlift (Barbell)", sets:4, reps:"6", note:"70% of Deadlift 1RM — wide stance", liftKey:"Deadlift", pct:0.70},
-      // Upper hypertrophy
-      {group:"Upper Hypertrophy", name:"DB Incline Press", sets:4, reps:"12", note:"Moderate weight, full ROM, slow eccentric"},
-      {name:"DB Bent-Over Row", sets:4, reps:"12", note:"Both arms, controlled, squeeze at top"},
-      {name:"DB Lateral Raises", sets:3, reps:"15", note:"Superset with curls if desired"},
-      // Arms
-      {group:"Arms", name:"EZ-Bar Curl", sets:4, reps:"12", note:"Full ROM, controlled eccentric"},
-      {name:"Skull Crushers (EZ-Bar)", sets:4, reps:"12", note:"Lower to forehead, full extension"},
-      {name:"Cable Tricep Pushdown", sets:3, reps:"15", note:"Straight bar, elbows pinned"},
-      {name:"Cable Hammer Curl", sets:3, reps:"15", note:"Rope attachment, neutral grip"},
-      // Core finisher
-      {group:"Core Finisher", name:"Ab Wheel Rollout", sets:3, reps:"12", note:"Full extension, no hip sag"},
-      {name:"Hanging Knee Raises", sets:3, reps:"15", note:"Slow and controlled"},
-      {name:"Plank to Failure", sets:2, reps:"Max hold", note:"Rest 90 sec between holds"},
+      {group:"Quad Hypertrophy",
+       name:"Hack Squat (Machine)", sets:5, reps:"10-12", note:"Full depth, 3-sec eccentric, no lockout = constant tension", muscles:["Q","G"]},
+      {name:"Leg Press (Machine)", sets:4, reps:"15", note:"High foot placement — glute bias, don't lock out knees", muscles:["Q","G","H"]},
+      {name:"Bulgarian Split Squat (DB)", sets:4, reps:"10 each", note:"Heavy DBs — front foot forward, knee tracks over toe", muscles:["Q","G"]},
+      {name:"Leg Extension (Machine)", sets:4, reps:"15-20", note:"Drop set on last set — slow eccentric, squeeze at top", muscles:["Q"]},
+      {group:"Hamstring Hypertrophy",
+       name:"Romanian Deadlift (DB)", sets:4, reps:"12", note:"Deep stretch — feel every rep in the hamstrings", muscles:["H","G"]},
+      {name:"Lying Leg Curl (Machine)", sets:4, reps:"12-15", note:"Full ROM, 2-sec hold at peak, slow return", muscles:["H"]},
+      {name:"Seated Leg Curl (Machine)", sets:3, reps:"15", note:"Different angle than lying — both are needed", muscles:["H"]},
+      {group:"Glute Isolation",
+       name:"Barbell Hip Thrust", sets:5, reps:"12", note:"Moderate weight — squeeze focus, not just moving weight", muscles:["G"]},
+      {name:"Cable Kickback", sets:3, reps:"15 each", note:"Ankle cuff — controlled extension, hard glute squeeze", muscles:["G"]},
+      {name:"Hip Abductor (Machine)", sets:3, reps:"20", note:"Slow reps, outer glute and hip — high rep pump", muscles:["G"]},
+      {name:"Hip Adductor (Machine)", sets:3, reps:"20", note:"Inner thigh — full ROM, controlled", muscles:["G","H"]},
+      {name:"Walking Lunges (DB)", sets:3, reps:"24 total", note:"Long stride, push through heel to bias glutes", muscles:["Q","G","H"]},
     ],
     conditioning:{
-      format:"Hero/Chipper", desc:"\"The Grinder\" — For Time (cap: 25 min)",
-      workouts:["1000m Row","50 KB Swings (53/35 lb)","40 Wall Balls (20/14 lb)","30 Box Jumps (24\"/20\")","20 Burpee Box Jump-Overs","10 Sandbag Over Shoulder (AHAP)","500m Ski-Erg"],
-      equipment:"Rower, KB, Wall Ball, Box, Sandbag, Ski-Erg", intensity:"Very Hard"
+      format:"10-Min Finisher", desc:"EMOM 10 min — Active Recovery",
+      workouts:["Min 1: 15 Bodyweight Glute Bridges (squeeze each rep)","Min 2: 10 Box Step-Ups (bodyweight, slow)","Repeat for 10 minutes — blood flow only, zero intensity"],
+      equipment:"Box", intensity:"Light", duration:"~10 min"
     }
   },
 ];
 
-// ═══════════════════════════════════════════════════════
-// STATE & STORAGE
-// ═══════════════════════════════════════════════════════
-const LS_KEY = "forge_v5";
-let state = { orms:{}, logs:{} };
-let currentWeek = 1;
-let currentDay = 0;
-let calcORM = 0;
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+const LS_KEY="forge_v7";
+let state={orms:{},logs:{}};
+let currentWeek=1,currentDay=0,calcORM=0;
 
-function loadState() { try { const d=localStorage.getItem(LS_KEY); if(d) state=JSON.parse(d); } catch{} }
-function saveState() { try { localStorage.setItem(LS_KEY,JSON.stringify(state)); } catch{} }
+function loadState(){ try{ const d=localStorage.getItem(LS_KEY); if(d) state=JSON.parse(d); }catch{} }
+function saveState(){ try{ localStorage.setItem(LS_KEY,JSON.stringify(state)); }catch{} }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 // HELPERS
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 function epley(w,r){ if(!w||!r||r<1) return 0; if(r===1) return w; return Math.round(w*(1+r/30)); }
 function workingWeight(orm,pct){ return Math.round((orm*pct)/2.5)*2.5; }
 function logKey(w,d,n){ return `w${w}_d${d}_${n.replace(/\W/g,"_")}`; }
-function iColor(i){ if(i.includes("Very Hard")) return "#ff4444"; if(i.includes("Hard")) return "#ff8c42"; if(i.includes("Moderate")) return "#ffcc00"; return "#4ade80"; }
 function safeId(n){ return n.replace(/\W/g,"_"); }
+function iColor(i){ if(i==="Very Hard") return "#ff4444"; if(i==="Moderate") return "#ffcc00"; return "#4ade80"; }
 
 function toast(msg,color="#4ade80"){
   const el=document.getElementById("toast");
@@ -386,31 +410,29 @@ function toast(msg,color="#4ade80"){
   setTimeout(()=>{ el.style.display="none"; },2500);
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 // TABS
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 function showTab(tab){
   ["program","calculator","progress","backup"].forEach(t=>{
     document.getElementById(`tab-${t}`).classList.toggle("hidden",t!==tab);
   });
   document.querySelectorAll(".tab-btn").forEach((btn,i)=>{
-    const tabs=["program","calculator","progress","backup"];
-    btn.classList.toggle("active",tabs[i]===tab);
+    btn.classList.toggle("active",["program","calculator","progress","backup"][i]===tab);
   });
   if(tab==="progress") renderProgress();
   if(tab==="calculator") renderSavedORMs();
   if(tab==="backup") renderBackupSummary();
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 // PROGRAM
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 function renderWeekBtns(){
   document.getElementById("week-btns").innerHTML=WAVES.map(w=>`
     <button class="week-btn${w.week===currentWeek?" active":""}${w.deload&&w.week!==currentWeek?" deload":""}" onclick="selectWeek(${w.week})">${w.week}</button>
   `).join("");
 }
-
 function renderWeekInfo(){
   const w=WAVES[currentWeek-1];
   document.getElementById("week-info").innerHTML=`
@@ -419,13 +441,11 @@ function renderWeekInfo(){
     ${w.deload?`<span class="badge" style="background:#1a3a1a;color:#4ade80;margin-left:8px;">${w.test?"TEST":"DELOAD"}</span>`:""}
   `;
 }
-
 function renderDayBtns(){
   document.getElementById("day-btns").innerHTML=DAYS.map((d,i)=>`
     <button class="day-btn${i===currentDay?" active":""}" style="${i===currentDay?`background:${d.color};`:""}color:${i===currentDay?"#fff":"#aaa"};" onclick="selectDay(${i})">${d.icon} ${d.day}</button>
   `).join("");
 }
-
 function selectWeek(w){ currentWeek=w; renderWeekBtns(); renderWeekInfo(); renderDay(); }
 function selectDay(d){ currentDay=d; renderDayBtns(); renderDay(); }
 
@@ -436,12 +456,15 @@ function renderDay(){
   const pw=orm?workingWeight(orm,wave.pct):null;
   const c=iColor(day.conditioning.intensity);
 
-  // Main lift block
+  const volHTML=day.volSummary?`<div class="vol-summary">${day.volSummary.map(v=>`<span class="vol-pill" style="background:${v.color}22;color:${v.color};">${v.label}</span>`).join("")}</div>`:"";
+
+  const hypBanner=day.hypertrophyNote?`<div class="hyp-banner">💜 <strong>Hypertrophy Protocol:</strong> ${day.hypertrophyNote}</div>`:"";
+
   let mainSection="";
   if(wave.test){
     mainSection=`<div style="padding:12px;background:#1a1a2e;border-radius:8px;border:1px solid #7c7cff44;">
       <div style="color:#7c7cff;font-weight:700;">🎯 TEST WEEK — Find Your New 1RM</div>
-      <div style="color:#aaa;font-size:13px;margin-top:6px;">50%×5 → 65%×3 → 75%×2 → 85%×1 → 90%×1 → 95%×1 → 100%+×1</div>
+      <div style="color:#aaa;font-size:13px;margin-top:6px;">50%×5 → 65%×3 → 75%×2 → 85%×1 → 90%×1 → 95%×1 → 100%+×1 attempt</div>
     </div>`;
   } else {
     mainSection=`
@@ -462,19 +485,18 @@ function renderDay(){
     `;
   }
 
-  // Accessory block — with group headers
-  let accessoryHTML="";
+  let accHTML="";
   day.accessory.forEach(ex=>{
-    if(ex.group){
-      accessoryHTML+=`<div class="group-label">${ex.group}</div>`;
-    }
+    if(ex.group) accHTML+=`<div class="group-label">${ex.group}</div>`;
     const aOrm=ex.liftKey?state.orms[ex.liftKey]:null;
     const apw=aOrm&&ex.pct?workingWeight(aOrm,ex.pct):null;
-    accessoryHTML+=`<div class="ex-card">
+    const tags=(ex.muscles||[]).map(m=>mtag(m)).join("");
+    accHTML+=`<div class="ex-card">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px;">
         <div style="flex:1;min-width:160px;">
           <div class="ex-name">${ex.name}</div>
           <div class="ex-note">${ex.note}</div>
+          <div style="margin-top:5px;">${tags}</div>
         </div>
         <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
           <span style="font-size:13px;color:#aaa;background:#222;padding:3px 10px;border-radius:6px;">${ex.sets}×${ex.reps}</span>
@@ -489,12 +511,15 @@ function renderDay(){
     <div style="background:linear-gradient(135deg,${day.color}22,#1a1a1a);border:1px solid ${day.color}44;border-radius:12px;padding:14px 16px;margin-bottom:12px;">
       <span style="font-size:11px;color:${day.color};font-weight:700;letter-spacing:2px;text-transform:uppercase;">${day.type}</span>
       <h2 style="margin:4px 0 2px;font-size:20px;font-weight:800;color:#fff;">${day.day}</h2>
-      <span style="font-size:13px;color:#aaa;">Focus: ${day.focus}</span>
+      <span style="font-size:13px;color:#aaa;">${day.focus}</span>
     </div>
+
+    ${volHTML}
+    ${hypBanner}
 
     <div style="margin-bottom:12px;">
       <div class="section-label" style="color:#666;">🔥 Warm-Up</div>
-      <div style="color:#aaa;font-size:13px;line-height:1.8;">5 min easy cardio (Rower or Assault Bike) → 2 rounds: 10 Hip Circles each side, 10 Band Pull-Aparts, 10 Leg Swings, 10 World's Greatest Stretch → Barbell warm-up: empty bar×10, 40%×5, 55%×3</div>
+      <div style="color:#aaa;font-size:13px;line-height:1.8;">5 min easy cardio (Rower or Assault Bike) → 2 rounds: 10 Hip Circles each side, 10 Leg Swings, 10 Glute Bridges, 10 World's Greatest Stretch → Barbell warm-up: empty bar×10, 40%×5, 55%×3</div>
     </div>
 
     <div style="margin-bottom:12px;">
@@ -503,12 +528,12 @@ function renderDay(){
     </div>
 
     <div style="margin-bottom:12px;">
-      <div class="section-label" style="color:#555;">🔧 Accessory & Arms/Core</div>
-      ${accessoryHTML}
+      <div class="section-label" style="color:#555;">🔧 Accessory Work</div>
+      ${accHTML}
     </div>
 
     <div style="margin-bottom:12px;">
-      <div class="section-label" style="color:#ff6b35;">🏁 Conditioning — ${day.conditioning.format}</div>
+      <div class="section-label" style="color:#ff6b35;">🏁 ${day.conditioning.format} <span style="color:#555;font-weight:400;font-size:10px;letter-spacing:0;text-transform:none;margin-left:6px;">${day.conditioning.duration}</span></div>
       <div class="cond-box">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px;">
           <span style="font-size:13px;font-weight:700;color:#4ade80;">${day.conditioning.desc}</span>
@@ -516,71 +541,38 @@ function renderDay(){
         </div>
         ${day.conditioning.workouts.map(w=>`<div class="cond-item"><span style="color:#4ade80;flex-shrink:0;">→</span><span>${w}</span></div>`).join("")}
         <div style="margin-top:8px;font-size:12px;color:#666;">Equipment: ${day.conditioning.equipment}</div>
-        ${wave.deload&&!wave.test?`<div style="margin-top:8px;padding:8px 10px;background:#1a2a1a;border-radius:6px;font-size:12px;color:#4ade80;">💚 Deload Week: 60-70% effort. Optional: 20 min Zone 2 cardio.</div>`:""}
+        ${wave.deload&&!wave.test?`<div style="margin-top:8px;padding:8px 10px;background:#1a2a1a;border-radius:6px;font-size:12px;color:#4ade80;">💚 Deload Week: Skip the finisher entirely or do 5 min easy walking.</div>`:""}
       </div>
     </div>
 
-    <div style="margin-bottom:20px;">
+    <div style="margin-bottom:24px;">
       <div class="section-label" style="color:#444;">🧘 Cool-Down</div>
-      <div style="color:#aaa;font-size:13px;line-height:1.8;">5–10 min static stretching: Hip flexors (2 min each), Hamstrings, Chest/shoulders, Lats, Thoracic spine foam roll. Prioritise muscles worked today.</div>
+      <div style="color:#aaa;font-size:13px;line-height:1.8;">5–10 min static stretching: Hip flexors (2 min each side), Hamstrings, Pigeon pose (glutes), Quad stretch, Thoracic foam roll. Hold each 30–45 sec.</div>
     </div>
   `;
 }
 
-// ─── Log widget ───────────────────────────────────────
-function renderLogWidget(exName, color){
+function renderLogWidget(exName,color){
   const key=logKey(currentWeek,currentDay,exName);
   const val=state.logs[key]||"";
   const sid=safeId(exName);
-  if(val){
-    return `<div class="logged-row">
-      <span style="font-size:12px;color:#666;">Logged:</span>
-      <span class="logged-val" style="color:${color};">${val} lbs</span>
-      <button class="edit-link" onclick="editLog('${key}','${color}','${sid}')">edit</button>
-    </div>`;
-  }
+  if(val) return `<div class="logged-row"><span style="font-size:12px;color:#666;">Logged:</span><span class="logged-val" style="color:${color};">${val} lbs</span><button class="edit-link" onclick="editLog('${key}','${color}','${sid}')">edit</button></div>`;
   return `<button class="log-btn" onclick="startLog('${key}','${color}','${sid}')">＋ Log weight</button>`;
 }
-
-function startLog(key,color,sid){
-  event.target.parentElement.innerHTML=logInputHTML(key,color,sid,"");
-  focusLogInput(sid);
-}
-function editLog(key,color,sid){
-  const val=state.logs[key]||"";
-  event.target.parentElement.innerHTML=logInputHTML(key,color,sid,val);
-  focusLogInput(sid);
-}
+function startLog(key,color,sid){ event.target.parentElement.innerHTML=logInputHTML(key,color,sid,""); focusLog(sid); }
+function editLog(key,color,sid){ event.target.parentElement.innerHTML=logInputHTML(key,color,sid,state.logs[key]||""); focusLog(sid); }
 function logInputHTML(key,color,sid,val){
-  return `<div class="log-row">
-    <input type="number" class="log-input" id="li_${sid}" value="${val}" placeholder="lbs" style="border-color:${color};" onkeydown="if(event.key==='Enter') saveLog('${key}','${color}','${sid}')">
-    <span style="font-size:12px;color:#666;">lbs</span>
-    <button class="log-save" style="background:${color};" onclick="saveLog('${key}','${color}','${sid}')">Save</button>
-    <button class="log-cancel" onclick="renderDay()">✕</button>
-  </div>`;
+  return `<div class="log-row"><input type="number" class="log-input" id="li_${sid}" value="${val}" placeholder="lbs" style="border-color:${color};" onkeydown="if(event.key==='Enter') saveLog('${key}','${color}','${sid}')"><span style="font-size:12px;color:#666;">lbs</span><button class="log-save" style="background:${color};" onclick="saveLog('${key}','${color}','${sid}')">Save</button><button class="log-cancel" onclick="renderDay()">✕</button></div>`;
 }
-function focusLogInput(sid){
-  setTimeout(()=>{ const el=document.getElementById(`li_${sid}`); if(el){el.focus();el.select();} },50);
-}
-function saveLog(key,color,sid){
-  const el=document.getElementById(`li_${sid}`);
-  if(!el||!el.value) return;
-  state.logs[key]=el.value;
-  saveState();
-  toast("✓ Weight logged");
-  renderDay();
-}
+function focusLog(sid){ setTimeout(()=>{ const el=document.getElementById(`li_${sid}`); if(el){el.focus();el.select();} },50); }
+function saveLog(key,color,sid){ const el=document.getElementById(`li_${sid}`); if(!el||!el.value) return; state.logs[key]=el.value; saveState(); toast("✓ Weight logged"); renderDay(); }
 
-// ═══════════════════════════════════════════════════════
-// 1RM CALCULATOR
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// 1RM CALC
+// ═══════════════════════════════════════════════════════════════
 function populateLiftSelects(){
-  ["calc-lift","manual-lift"].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el) el.innerHTML=MAIN_LIFTS.map(l=>`<option>${l}</option>`).join("");
-  });
+  ["calc-lift","manual-lift"].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=MAIN_LIFTS.map(l=>`<option>${l}</option>`).join(""); });
 }
-
 function calculateORM(){
   const w=parseFloat(document.getElementById("calc-weight").value);
   const r=parseInt(document.getElementById("calc-reps").value);
@@ -591,48 +583,24 @@ function calculateORM(){
   document.getElementById("calc-orm-val").textContent=calcORM;
   document.getElementById("calc-save-btn").textContent=`💾 Save ${lift} 1RM = ${calcORM} lbs`;
   const pcts=[0.50,0.55,0.60,0.65,0.70,0.75,0.80,0.85,0.90,0.95,1.0];
-  document.getElementById("calc-pct-grid").innerHTML=pcts.map(p=>`
-    <div class="pct-box"><div class="pct-label">${Math.round(p*100)}%</div><div class="pct-val">${Math.round(calcORM*p/2.5)*2.5}</div></div>
-  `).join("");
+  document.getElementById("calc-pct-grid").innerHTML=pcts.map(p=>`<div class="pct-box"><div class="pct-label">${Math.round(p*100)}%</div><div class="pct-val">${Math.round(calcORM*p/2.5)*2.5}</div></div>`).join("");
   document.getElementById("calc-result").classList.remove("hidden");
 }
-
-function saveCalcORM(){
-  const lift=document.getElementById("calc-lift").value;
-  if(!calcORM) return;
-  state.orms[lift]=calcORM; saveState();
-  toast(`✓ ${lift} 1RM saved`); renderSavedORMs();
-}
-
-function saveManualORM(){
-  const lift=document.getElementById("manual-lift").value;
-  const w=parseFloat(document.getElementById("manual-weight").value);
-  if(!w){ toast("Enter a weight","#ff4444"); return; }
-  state.orms[lift]=w; saveState();
-  document.getElementById("manual-weight").value="";
-  toast(`✓ ${lift} 1RM saved`); renderSavedORMs();
-}
-
-function clearORM(lift){
-  delete state.orms[lift]; saveState(); renderSavedORMs(); toast(`${lift} 1RM cleared`,"#888");
-}
-
+function saveCalcORM(){ const lift=document.getElementById("calc-lift").value; if(!calcORM) return; state.orms[lift]=calcORM; saveState(); toast(`✓ ${lift} 1RM saved`); renderSavedORMs(); }
+function saveManualORM(){ const lift=document.getElementById("manual-lift").value; const w=parseFloat(document.getElementById("manual-weight").value); if(!w){ toast("Enter a weight","#ff4444"); return; } state.orms[lift]=w; saveState(); document.getElementById("manual-weight").value=""; toast(`✓ ${lift} 1RM saved`); renderSavedORMs(); }
+function clearORM(lift){ delete state.orms[lift]; saveState(); renderSavedORMs(); toast(`${lift} 1RM cleared`,"#888"); }
 function renderSavedORMs(){
   document.getElementById("saved-orms").innerHTML=MAIN_LIFTS.map(lift=>`
     <div class="orm-card" style="border:1px solid ${state.orms[lift]?"#e85d0444":"#2a2a2a"};">
       <div style="font-size:12px;color:#777;margin-bottom:4px;">${lift}</div>
-      ${state.orms[lift]
-        ?`<div style="font-size:24px;font-weight:900;color:#e85d04;">${state.orms[lift]}</div>
-           <div style="font-size:11px;color:#666;">lbs</div>
-           <button onclick="clearORM('${lift}')" style="margin-top:5px;background:none;border:none;color:#555;font-size:11px;cursor:pointer;padding:0;">clear</button>`
-        :`<div style="font-size:13px;color:#444;font-style:italic;">Not set</div>`}
+      ${state.orms[lift]?`<div style="font-size:24px;font-weight:900;color:#e85d04;">${state.orms[lift]}</div><div style="font-size:11px;color:#666;">lbs</div><button onclick="clearORM('${lift}')" style="margin-top:5px;background:none;border:none;color:#555;font-size:11px;cursor:pointer;padding:0;">clear</button>`:`<div style="font-size:13px;color:#444;font-style:italic;">Not set</div>`}
     </div>
   `).join("");
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 // PROGRESS
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 function renderProgress(){
   document.getElementById("progress-content").innerHTML=MAIN_LIFTS.map(lift=>{
     const orm=state.orms[lift];
@@ -641,30 +609,25 @@ function renderProgress(){
         <span style="font-weight:800;font-size:15px;color:#fff;">${lift}</span>
         <span style="font-size:13px;color:${orm?"#e85d04":"#555"};">${orm?`1RM: ${orm} lbs`:"No 1RM saved"}</span>
       </div>
-      ${orm?`<div style="overflow-x:auto;">
-        <table class="progress-table">
-          <thead><tr><th>Wk</th><th>Sets×Reps</th><th>%</th><th>Weight</th><th>Phase</th></tr></thead>
-          <tbody>${WAVES.map(w=>`
-            <tr style="background:${w.deload?"#0f0f1a":"transparent"};">
-              <td style="font-weight:700;color:${w.deload?"#7c7cff":"#fff"};">${w.week}</td>
-              <td style="color:#ccc;">${w.test?"1×1 (MAX)":`${w.sets}×${w.reps}`}</td>
-              <td style="color:#888;">${Math.round(w.pct*100)}%</td>
-              <td style="font-weight:700;color:${w.test?"#ff4444":"#e85d04"};">${w.test?"MAX":`${workingWeight(orm,w.pct)} lbs`}</td>
-              <td><span class="badge" style="background:${w.test?"#ff444422":w.deload?"#7c7cff22":"#e85d0422"};color:${w.test?"#ff4444":w.deload?"#7c7cff":"#e85d04"};">${w.test?"TEST":w.deload?"DELOAD":"BUILD"}</span></td>
-            </tr>
-          `).join("")}</tbody>
-        </table>
-      </div>`
-      :`<div style="padding:12px;background:#111;border-radius:8px;color:#555;font-size:13px;text-align:center;">Save a 1RM in the calculator to see your loading plan</div>`}
+      ${orm?`<div style="overflow-x:auto;"><table class="progress-table">
+        <thead><tr><th>Wk</th><th>Sets×Reps</th><th>%</th><th>Weight</th><th>Phase</th></tr></thead>
+        <tbody>${WAVES.map(w=>`<tr style="background:${w.deload?"#0f0f1a":"transparent"};">
+          <td style="font-weight:700;color:${w.deload?"#7c7cff":"#fff"};">${w.week}</td>
+          <td style="color:#ccc;">${w.test?"1×1 (MAX)":`${w.sets}×${w.reps}`}</td>
+          <td style="color:#888;">${Math.round(w.pct*100)}%</td>
+          <td style="font-weight:700;color:${w.test?"#ff4444":"#e85d04"};">${w.test?"MAX":`${workingWeight(orm,w.pct)} lbs`}</td>
+          <td><span class="badge" style="background:${w.test?"#ff444422":w.deload?"#7c7cff22":"#e85d0422"};color:${w.test?"#ff4444":w.deload?"#7c7cff":"#e85d04"};">${w.test?"TEST":w.deload?"DELOAD":"BUILD"}</span></td>
+        </tr>`).join("")}</tbody>
+      </table></div>`:`<div style="padding:12px;background:#111;border-radius:8px;color:#555;font-size:13px;text-align:center;">Save a 1RM in the calculator to see your loading plan</div>`}
     </div>`;
   }).join("");
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 // BACKUP
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 function renderBackupSummary(){
-  const oc=Object.keys(state.orms).length, lc=Object.keys(state.logs).length;
+  const oc=Object.keys(state.orms).length,lc=Object.keys(state.logs).length;
   document.getElementById("backup-summary").textContent=`${oc} 1RMs · ${lc} logged sets`;
   document.getElementById("current-data-summary").innerHTML=oc===0&&lc===0
     ?`<div style="font-size:13px;color:#444;font-style:italic;">No data yet — enter 1RMs and log workouts first</div>`
@@ -672,49 +635,23 @@ function renderBackupSummary(){
       ${oc>0?`<div style="margin-bottom:8px;"><div style="font-size:12px;color:#555;margin-bottom:6px;">Saved 1RMs</div><div style="display:flex;flex-wrap:wrap;gap:6px;">${MAIN_LIFTS.filter(l=>state.orms[l]).map(l=>`<div style="background:#1a1a1a;border-radius:6px;padding:4px 12px;"><span style="font-size:12px;color:#777;">${l}: </span><span style="font-size:13px;font-weight:700;color:#e85d04;">${state.orms[l]} lbs</span></div>`).join("")}</div></div>`:""}
       ${lc>0?`<div style="font-size:12px;color:#555;">${lc} workout entries logged</div>`:""}`;
 }
-
-function showExport(){
-  document.getElementById("export-text").value=JSON.stringify({orms:state.orms,logs:state.logs,savedAt:new Date().toISOString(),v:5});
-  document.getElementById("export-panel").classList.remove("hidden");
-  document.getElementById("import-panel").classList.add("hidden");
-  document.getElementById("copy-btn").textContent="Copy All";
-  document.getElementById("copy-btn").style.background="#e85d04";
-}
-
-function showImport(){
-  document.getElementById("import-panel").classList.remove("hidden");
-  document.getElementById("export-panel").classList.add("hidden");
-  document.getElementById("import-text").value="";
-}
-
+function showExport(){ document.getElementById("export-text").value=JSON.stringify({orms:state.orms,logs:state.logs,savedAt:new Date().toISOString(),v:7}); document.getElementById("export-panel").classList.remove("hidden"); document.getElementById("import-panel").classList.add("hidden"); const b=document.getElementById("copy-btn"); b.textContent="Copy All"; b.style.background="#e85d04"; }
+function showImport(){ document.getElementById("import-panel").classList.remove("hidden"); document.getElementById("export-panel").classList.add("hidden"); document.getElementById("import-text").value=""; }
 function hideImport(){ document.getElementById("import-panel").classList.add("hidden"); }
-
 async function copyBackup(){
-  const text=document.getElementById("export-text").value;
-  const btn=document.getElementById("copy-btn");
-  try {
-    if(navigator.clipboard&&navigator.clipboard.writeText){ await navigator.clipboard.writeText(text); }
-    else { document.getElementById("export-text").select(); document.execCommand("copy"); }
-    btn.textContent="✓ Copied!"; btn.style.background="#2b9348";
-    setTimeout(()=>{ btn.textContent="Copy All"; btn.style.background="#e85d04"; },2500);
-  } catch { document.getElementById("export-text").select(); toast("Select text manually, then copy","#ffcc00"); }
+  const text=document.getElementById("export-text").value; const btn=document.getElementById("copy-btn");
+  try{ if(navigator.clipboard&&navigator.clipboard.writeText){ await navigator.clipboard.writeText(text); } else { document.getElementById("export-text").select(); document.execCommand("copy"); } btn.textContent="✓ Copied!"; btn.style.background="#2b9348"; setTimeout(()=>{ btn.textContent="Copy All"; btn.style.background="#e85d04"; },2500); }
+  catch{ document.getElementById("export-text").select(); toast("Select text manually then copy","#ffcc00"); }
 }
-
 function restoreBackup(){
   const text=document.getElementById("import-text").value.trim();
-  try {
-    const p=JSON.parse(text);
-    if(p.orms!==undefined&&p.logs!==undefined){
-      state.orms=p.orms||{}; state.logs=p.logs||{}; saveState();
-      toast("✓ Data restored!"); hideImport(); renderBackupSummary();
-      setTimeout(()=>showTab("program"),600);
-    } else { toast("⚠️ Invalid backup data","#ff8c42"); }
-  } catch { toast("⚠️ Could not read backup — paste the full text","#ff4444"); }
+  try{ const p=JSON.parse(text); if(p.orms!==undefined&&p.logs!==undefined){ state.orms=p.orms||{}; state.logs=p.logs||{}; saveState(); toast("✓ Data restored!"); hideImport(); renderBackupSummary(); setTimeout(()=>showTab("program"),600); } else { toast("⚠️ Invalid backup","#ff8c42"); } }
+  catch{ toast("⚠️ Could not read backup — paste the full text","#ff4444"); }
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 // INIT
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 loadState();
 populateLiftSelects();
 renderWeekBtns();
