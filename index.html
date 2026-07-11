@@ -415,6 +415,21 @@ function computeSets(ex,wave){
   if(wave.deload && !wave.test){ return Math.max(2, Math.round(ex.sets*0.7)); }
   return ex.sets;
 }
+function isTimeBased(ex){ return /sec|hold/i.test(ex.reps) || /Plank|Deadbug/i.test(ex.name); }
+function incrementFor(ex){
+  const m=String(ex.reps).match(/\d+/);
+  const n=m?parseInt(m[0]):12;
+  return n<=8 ? 10 : 5;
+}
+function getBaselineWeight(exName,dayIdx,uptoWeek){
+  for(let w=uptoWeek-1; w>=1; w--){
+    const waveW=WAVES[w-1];
+    if(waveW.deload) continue;
+    const key=logKey(w,dayIdx,exName);
+    if(state.logs[key]) return {week:w, weight:parseFloat(state.logs[key])};
+  }
+  return null;
+}
 
 function toast(msg,color="#4ade80"){
   const el=document.getElementById("toast");
@@ -498,7 +513,7 @@ function renderDay(){
   }
 
   const isDeload = wave.deload && !wave.test;
-  const progressionBanner = `<div style="background:#0a1a2a;border:1px solid #1d6fa444;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#4da6ff;line-height:1.6;">📈 <strong>Progression Rule:</strong> Once you hit the top of the rep range on all sets with solid form, add weight next time — 5–10 lbs for barbell/machine work, one dumbbell size for DB/KB work.</div>`;
+  const progressionBanner = `<div style="background:#0a1a2a;border:1px solid #1d6fa444;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#4da6ff;line-height:1.6;">📈 <strong>Auto-Progression:</strong> Each exercise below suggests your next weight based on what you logged last time. Log every session so the suggestions stay accurate — hit the rep target with solid form before taking the suggested jump.</div>`;
   const deloadAccNote = isDeload
     ? `<div style="background:#1a2a1a;border:1px solid #2b934844;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#4ade80;">💚 <strong>Deload Week:</strong> Accessory sets trimmed ~30% below (already reflected in each exercise) — go lighter and prioritize form and recovery.</div>`
     : "";
@@ -513,12 +528,34 @@ function renderDay(){
     const setsChanged=dSets!==ex.sets;
     const rest=restTime(ex.reps);
     const tipHTML=ex.tip?`<div style="font-size:11px;color:#ff8c42;font-style:italic;margin-top:5px;">${ex.tip}</div>`:"";
+
+    let suggestionHTML="";
+    if(!ex.liftKey){
+      if(isTimeBased(ex)){
+        suggestionHTML=`<div style="font-size:11px;color:#4ade80;margin-top:5px;">📈 Progress by adding 5-10 sec once the full time feels solid — don't add load first.</div>`;
+      } else {
+        const baseline=getBaselineWeight(ex.name,currentDay,currentWeek);
+        if(baseline){
+          if(isDeload){
+            const suggested=Math.round((baseline.weight*0.85)/2.5)*2.5;
+            suggestionHTML=`<div style="font-size:11px;color:#4ade80;margin-top:5px;">📈 Try: <strong>${suggested} lbs</strong> (deload — ease off from ${baseline.weight} lbs)</div>`;
+          } else {
+            const suggested=baseline.weight+incrementFor(ex);
+            suggestionHTML=`<div style="font-size:11px;color:#4ade80;margin-top:5px;">📈 Try: <strong>${suggested} lbs</strong> (last: ${baseline.weight} lbs, Wk ${baseline.week})</div>`;
+          }
+        } else {
+          suggestionHTML=`<div style="font-size:11px;color:#555;margin-top:5px;font-style:italic;">📝 Log this week to start tracking progression</div>`;
+        }
+      }
+    }
+
     accHTML+=`<div class="ex-card">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px;">
         <div style="flex:1;min-width:160px;">
           <div class="ex-name">${ex.name}</div>
           <div class="ex-note">${ex.note}</div>
           <div style="margin-top:5px;">${tags}</div>
+          ${suggestionHTML}
           ${tipHTML}
         </div>
         <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex-shrink:0;">
