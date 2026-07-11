@@ -240,8 +240,8 @@ const DAYS = [
     accessory:[
       {group:"Quad Strength",
        name:"Front Squat", sets:4, reps:"5", note:"65% of Front Squat 1RM — upright torso, elbows high", liftKey:"Front Squat", pct:0.65, muscles:["Q"]},
-      {name:"Hack Squat (Machine)", sets:4, reps:"10", note:"Full depth, 3-sec eccentric, shoulder-width stance", muscles:["Q","G"]},
-      {name:"Leg Press (Machine)", sets:3, reps:"12", note:"High foot placement = more glute; low = more quad", muscles:["Q","G","H"]},
+      {name:"DB/KB Goblet Squat", sets:4, reps:"12", note:"Heavy DB or KB held at chest, full depth, elbows inside knees at bottom", muscles:["Q","G"]},
+      {name:"KB Front-Rack Walking Lunges", sets:3, reps:"20 total", note:"Rack KB(s) at chest, controlled steps, upright torso — heavy quad/glute demand", muscles:["Q","G"]},
       {name:"Leg Extension (Machine)", sets:4, reps:"15", note:"Full ROM, squeeze hard at top, slow eccentric", muscles:["Q"]},
       {group:"Glute Accessory",
        name:"Barbell Hip Thrust", sets:4, reps:"12", note:"1-sec pause at top, drive through heels", muscles:["G"]},
@@ -301,14 +301,14 @@ const DAYS = [
     accessory:[
       {group:"Hamstring Strength",
        name:"Romanian Deadlift (Barbell)", sets:4, reps:"8", note:"65% of Deadlift 1RM — push hips back, deep stretch", liftKey:"Deadlift", pct:0.65, muscles:["H","G"]},
-      {name:"Lying Leg Curl (Machine)", sets:4, reps:"12", note:"Full ROM, 1-sec hold at contraction, slow eccentric", muscles:["H"]},
-      {name:"Seated Leg Curl (Machine)", sets:3, reps:"15", note:"Different angle — squeeze hard at peak", muscles:["H"]},
-      {name:"Nordic Curl (or Banded)", sets:3, reps:"6-8", note:"Eccentric focus — lower as slowly as possible", muscles:["H"]},
+      {name:"Slider/Towel Hamstring Curl", sets:4, reps:"12", note:"Lying on back, heels on sliders or towel — curl heels to glutes, no machine needed", muscles:["H"]},
+      {name:"Stability Ball Hamstring Curl", sets:3, reps:"15", note:"Heels on ball, hips up — curl ball toward glutes, control the return", muscles:["H"]},
+      {name:"Barbell Good Morning", sets:3, reps:"10", note:"Light-moderate weight — hinge at hips, deep hamstring stretch, flat back", muscles:["H","G"]},
       {group:"Glute Isolation",
        name:"Barbell Hip Thrust", sets:5, reps:"10", note:"Full extension, 1-sec squeeze at top, drive through heels", muscles:["G"]},
       {name:"Cable Kickback", sets:3, reps:"15 each", note:"Ankle cuff — squeeze the glute hard at peak, no hip swing", muscles:["G"]},
-      {name:"Hip Abductor (Machine)", sets:3, reps:"20", note:"Slow reps, feel the outer glute working", muscles:["G"]},
-      {name:"Hip Adductor (Machine)", sets:3, reps:"20", note:"Full ROM, controlled squeeze at peak", muscles:["G","H"]},
+      {name:"Banded Lateral Walks (Monster Walk)", sets:3, reps:"20 steps each direction", note:"Mini band above knees — stay low, controlled steps, portable anywhere", muscles:["G"]},
+      {name:"DB Sumo Squat Pulse", sets:3, reps:"15", note:"Wide stance, small pulses at the bottom — inner thigh/adductor burn", muscles:["G","H"]},
       {group:"Core",
        name:"Deadbug", sets:3, reps:"10 each side", note:"Lower back flat to floor throughout, move slowly", muscles:["C"]},
       {name:"Pallof Press (Cable)", sets:3, reps:"12 each side", note:"Anti-rotation — resist the cable, stand tall", muscles:["C"]},
@@ -362,8 +362,8 @@ const DAYS = [
     ],
     accessory:[
       {group:"Quad Hypertrophy",
-       name:"Hack Squat (Machine)", sets:5, reps:"10-12", note:"Full depth, 3-sec eccentric, no lockout = constant tension", muscles:["Q","G"]},
-      {name:"Leg Press (Machine)", sets:4, reps:"15", note:"High foot placement — glute bias, don't lock out knees", muscles:["Q","G","H"]},
+       name:"Hack Squat (Machine)", sets:5, reps:"10-12", note:"Full depth, 3-sec eccentric, no lockout = constant tension", muscles:["Q","G"], tip:"⏱ Short on time? Drop to 4 sets here first."},
+      {name:"Heels-Elevated DB Squat", sets:4, reps:"15", note:"Plates or wedge under heels — upright torso, maximizes quad stretch and burn", muscles:["Q"]},
       {name:"Bulgarian Split Squat (DB)", sets:4, reps:"10 each", note:"Heavy DBs — front foot forward, knee tracks over toe", muscles:["Q","G"]},
       {name:"Leg Extension (Machine)", sets:4, reps:"15-20", note:"Drop set on last set — slow eccentric, squeeze at top", muscles:["Q"]},
       {group:"Hamstring Hypertrophy",
@@ -371,8 +371,8 @@ const DAYS = [
       {name:"Lying Leg Curl (Machine)", sets:4, reps:"12-15", note:"Full ROM, 2-sec hold at peak, slow return", muscles:["H"]},
       {name:"Seated Leg Curl (Machine)", sets:3, reps:"15", note:"Different angle than lying — both are needed", muscles:["H"]},
       {group:"Glute Isolation",
-       name:"Barbell Hip Thrust", sets:5, reps:"12", note:"Moderate weight — squeeze focus, not just moving weight", muscles:["G"]},
-      {name:"Cable Kickback", sets:3, reps:"15 each", note:"Ankle cuff — controlled extension, hard glute squeeze", muscles:["G"]},
+       name:"Barbell Hip Thrust", sets:5, reps:"12", note:"Moderate weight — squeeze focus, not just moving weight", muscles:["G"], tip:"⏱ Short on time? Drop to 4 sets here first."},
+      {name:"Single-Leg Hip Thrust (Bodyweight/DB)", sets:3, reps:"12 each", note:"Shoulders on bench, one foot planted — unilateral glute isolation, full squeeze at top", muscles:["G"]},
       {name:"Hip Abductor (Machine)", sets:3, reps:"20", note:"Slow reps, outer glute and hip — high rep pump", muscles:["G"]},
       {name:"Hip Adductor (Machine)", sets:3, reps:"20", note:"Inner thigh — full ROM, controlled", muscles:["G","H"]},
       {name:"Walking Lunges (DB)", sets:3, reps:"24 total", note:"Long stride, push through heel to bias glutes", muscles:["Q","G","H"]},
@@ -403,6 +403,18 @@ function workingWeight(orm,pct){ return Math.round((orm*pct)/2.5)*2.5; }
 function logKey(w,d,n){ return `w${w}_d${d}_${n.replace(/\W/g,"_")}`; }
 function safeId(n){ return n.replace(/\W/g,"_"); }
 function iColor(i){ if(i==="Very Hard") return "#ff4444"; if(i==="Moderate") return "#ffcc00"; return "#4ade80"; }
+function restTime(repsStr){
+  const m=String(repsStr).match(/\d+/);
+  const n=m?parseInt(m[0]):12;
+  if(n<=6) return "2-3 min";
+  if(n<=10) return "90 sec";
+  if(n<=15) return "75 sec";
+  return "60 sec";
+}
+function computeSets(ex,wave){
+  if(wave.deload && !wave.test){ return Math.max(2, Math.round(ex.sets*0.7)); }
+  return ex.sets;
+}
 
 function toast(msg,color="#4ade80"){
   const el=document.getElementById("toast");
@@ -468,9 +480,9 @@ function renderDay(){
     </div>`;
   } else {
     mainSection=`
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
-        ${[["Sets",wave.sets],["Reps",wave.reps],["Intensity",Math.round(wave.pct*100)+"%"]].map(([l,v])=>`
-          <div class="stat-box"><div class="stat-label">${l}</div><div class="stat-val" style="color:${day.color};">${v}</div></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;">
+        ${[["Sets",wave.sets],["Reps",wave.reps],["Intensity",Math.round(wave.pct*100)+"%"],["Rest",restTime(wave.reps)]].map(([l,v])=>`
+          <div class="stat-box"><div class="stat-label">${l}</div><div class="stat-val" style="color:${day.color};font-size:16px;">${v}</div></div>
         `).join("")}
       </div>
       ${day.mainLiftNote?`<div style="font-size:12px;color:#888;font-style:italic;margin-bottom:8px;">${day.mainLiftNote}</div>`:""}
@@ -485,22 +497,34 @@ function renderDay(){
     `;
   }
 
+  const isDeload = wave.deload && !wave.test;
+  const progressionBanner = `<div style="background:#0a1a2a;border:1px solid #1d6fa444;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#4da6ff;line-height:1.6;">📈 <strong>Progression Rule:</strong> Once you hit the top of the rep range on all sets with solid form, add weight next time — 5–10 lbs for barbell/machine work, one dumbbell size for DB/KB work.</div>`;
+  const deloadAccNote = isDeload
+    ? `<div style="background:#1a2a1a;border:1px solid #2b934844;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#4ade80;">💚 <strong>Deload Week:</strong> Accessory sets trimmed ~30% below (already reflected in each exercise) — go lighter and prioritize form and recovery.</div>`
+    : "";
+
   let accHTML="";
   day.accessory.forEach(ex=>{
     if(ex.group) accHTML+=`<div class="group-label">${ex.group}</div>`;
     const aOrm=ex.liftKey?state.orms[ex.liftKey]:null;
     const apw=aOrm&&ex.pct?workingWeight(aOrm,ex.pct):null;
     const tags=(ex.muscles||[]).map(m=>mtag(m)).join("");
+    const dSets=computeSets(ex,wave);
+    const setsChanged=dSets!==ex.sets;
+    const rest=restTime(ex.reps);
+    const tipHTML=ex.tip?`<div style="font-size:11px;color:#ff8c42;font-style:italic;margin-top:5px;">${ex.tip}</div>`:"";
     accHTML+=`<div class="ex-card">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px;">
         <div style="flex:1;min-width:160px;">
           <div class="ex-name">${ex.name}</div>
           <div class="ex-note">${ex.note}</div>
           <div style="margin-top:5px;">${tags}</div>
+          ${tipHTML}
         </div>
-        <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
-          <span style="font-size:13px;color:#aaa;background:#222;padding:3px 10px;border-radius:6px;">${ex.sets}×${ex.reps}</span>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex-shrink:0;">
+          <span style="font-size:13px;color:${setsChanged?"#7c7cff":"#aaa"};background:#222;padding:3px 10px;border-radius:6px;">${dSets}×${ex.reps}${setsChanged?" 💚":""}</span>
           ${apw?`<span style="font-size:13px;color:${day.color};font-weight:700;">${apw} lbs</span>`:""}
+          <span style="font-size:10px;color:#555;">⏱ Rest ${rest}</span>
         </div>
       </div>
       ${renderLogWidget(ex.name,day.color)}
@@ -529,6 +553,8 @@ function renderDay(){
 
     <div style="margin-bottom:12px;">
       <div class="section-label" style="color:#555;">🔧 Accessory Work</div>
+      ${progressionBanner}
+      ${deloadAccNote}
       ${accHTML}
     </div>
 
