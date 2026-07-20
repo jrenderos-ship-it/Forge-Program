@@ -383,7 +383,42 @@ const DAYS = [
       equipment:"Box", intensity:"Light", duration:"~10 min"
     }
   },
+
+  // ── WEDNESDAY: Full Body — Hypertrophy Pump Day (added at end of array on purpose — see index 5, keeps Thu/Fri/Sat indices stable for existing logs) ──
+  {
+    day:"Wednesday", type:"Full Body", focus:"Full Body Hypertrophy — Pump Day",
+    color:"#9333ea", icon:"⚡", mainLift:null,
+    hypertrophyNote:"A lighter full-body pump day sitting between your heavy sessions — 12-15 reps, 60-90 sec rest, chase the squeeze and blood flow rather than loading up. This adds extra growth stimulus without digging into recovery from your heavier days.",
+    volSummary:[
+      {label:"Legs",color:"#60a5fa"},{label:"Chest",color:"#f87171"},{label:"Back",color:"#38bdf8"},{label:"Shoulders",color:"#facc15"},{label:"Arms",color:"#fb923c"},{label:"Core",color:"#4ade80"}
+    ],
+    accessory:[
+      {group:"Legs",
+       name:"DB Romanian Deadlift", sets:3, reps:"12", note:"Light-moderate — deep stretch, hamstring pump, not a strength effort", muscles:["H","G"]},
+      {name:"Goblet Squat (DB/KB)", sets:3, reps:"15", note:"Moderate weight, full depth, controlled tempo — quad and glute pump", muscles:["Q","G"]},
+      {group:"Chest & Back",
+       name:"Incline DB Press", sets:3, reps:"12", note:"Light-moderate, full ROM, feel the stretch at the bottom", muscles:["Ch","Sh"]},
+      {name:"Cable Seated Row", sets:3, reps:"12", note:"Full retraction, squeeze the back at peak", muscles:["Bk"]},
+      {group:"Shoulders",
+       name:"DB Lateral Raise", sets:3, reps:"15", note:"Light weight, strict form, feel the burn — not about the load", muscles:["Sh"]},
+      {group:"Arms",
+       name:"EZ-Bar Curl", sets:3, reps:"12", note:"Controlled tempo, full ROM", muscles:["Bi"]},
+      {name:"Cable Tricep Pushdown (Rope)", sets:3, reps:"12", note:"Full extension, squeeze at bottom", muscles:["Tr"]},
+      {group:"Core",
+       name:"Hanging Knee Raises", sets:3, reps:"15", note:"Controlled, no swinging", muscles:["C"]},
+    ],
+    conditioning:{
+      format:"10-Min Finisher", desc:"EMOM 10 min — Easy Cardio Flush",
+      workouts:["Min 1: 150m easy Row or Ski-Erg","Min 2: 10 KB Swings (light)","Repeat for 10 minutes — conversational pace, blood flow only"],
+      equipment:"Rower/Ski-Erg, KB", intensity:"Light", duration:"~10 min"
+    }
+  },
 ];
+
+// Display order for day tabs (chronological Mon–Sat), mapped to the actual DAYS[] array indices above.
+// Wednesday lives at index 5 internally so Thu/Fri/Sat keep their original indices — this keeps
+// all previously logged data correctly matched to the right day.
+const DAY_ORDER = [0,1,5,2,3,4];
 
 // ═══════════════════════════════════════════════════════════════
 // STATE
@@ -469,9 +504,10 @@ function renderWeekInfo(){
   `;
 }
 function renderDayBtns(){
-  document.getElementById("day-btns").innerHTML=DAYS.map((d,i)=>`
-    <button class="day-btn${i===currentDay?" active":""}" style="${i===currentDay?`background:${d.color};`:""}color:${i===currentDay?"#fff":"#aaa"};" onclick="selectDay(${i})">${d.icon} ${d.day}</button>
-  `).join("");
+  document.getElementById("day-btns").innerHTML=DAY_ORDER.map(i=>{
+    const d=DAYS[i];
+    return `<button class="day-btn${i===currentDay?" active":""}" style="${i===currentDay?`background:${d.color};`:""}color:${i===currentDay?"#fff":"#aaa"};" onclick="selectDay(${i})">${d.icon} ${d.day}</button>`;
+  }).join("");
 }
 function selectWeek(w){ currentWeek=w; renderWeekBtns(); renderWeekInfo(); renderDay(); }
 function selectDay(d){ currentDay=d; renderDayBtns(); renderDay(); }
@@ -488,28 +524,30 @@ function renderDay(){
   const hypBanner=day.hypertrophyNote?`<div class="hyp-banner">💜 <strong>Hypertrophy Protocol:</strong> ${day.hypertrophyNote}</div>`:"";
 
   let mainSection="";
-  if(wave.test){
-    mainSection=`<div style="padding:12px;background:#1a1a2e;border-radius:8px;border:1px solid #7c7cff44;">
-      <div style="color:#7c7cff;font-weight:700;">🎯 TEST WEEK — Find Your New 1RM</div>
-      <div style="color:#aaa;font-size:13px;margin-top:6px;">50%×5 → 65%×3 → 75%×2 → 85%×1 → 90%×1 → 95%×1 → 100%+×1 attempt</div>
-    </div>`;
-  } else {
-    mainSection=`
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;">
-        ${[["Sets",wave.sets],["Reps",wave.reps],["Intensity",Math.round(wave.pct*100)+"%"],["Rest",restTime(wave.reps)]].map(([l,v])=>`
-          <div class="stat-box"><div class="stat-label">${l}</div><div class="stat-val" style="color:${day.color};font-size:16px;">${v}</div></div>
-        `).join("")}
-      </div>
-      ${day.mainLiftNote?`<div style="font-size:12px;color:#888;font-style:italic;margin-bottom:8px;">${day.mainLiftNote}</div>`:""}
-      ${pw
-        ?`<div style="padding:10px 14px;background:#111;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-            <span style="font-size:13px;color:#888;">Prescribed (1RM: <strong style="color:#fff;">${orm} lbs</strong>)</span>
-            <span style="font-size:22px;font-weight:800;color:${day.color};">${pw} lbs</span>
-          </div>`
-        :`<div style="padding:10px;background:#1a1a1a;border-radius:8px;color:#888;font-size:13px;text-align:center;margin-bottom:8px;">⚠️ No 1RM for ${day.mainLift} — set it in the 1RM Calc tab</div>`
-      }
-      ${renderLogWidget(`Main_${day.mainLift}`,day.color)}
-    `;
+  if(day.mainLift){
+    if(wave.test){
+      mainSection=`<div style="padding:12px;background:#1a1a2e;border-radius:8px;border:1px solid #7c7cff44;">
+        <div style="color:#7c7cff;font-weight:700;">🎯 TEST WEEK — Find Your New 1RM</div>
+        <div style="color:#aaa;font-size:13px;margin-top:6px;">50%×5 → 65%×3 → 75%×2 → 85%×1 → 90%×1 → 95%×1 → 100%+×1 attempt</div>
+      </div>`;
+    } else {
+      mainSection=`
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;">
+          ${[["Sets",wave.sets],["Reps",wave.reps],["Intensity",Math.round(wave.pct*100)+"%"],["Rest",restTime(wave.reps)]].map(([l,v])=>`
+            <div class="stat-box"><div class="stat-label">${l}</div><div class="stat-val" style="color:${day.color};font-size:16px;">${v}</div></div>
+          `).join("")}
+        </div>
+        ${day.mainLiftNote?`<div style="font-size:12px;color:#888;font-style:italic;margin-bottom:8px;">${day.mainLiftNote}</div>`:""}
+        ${pw
+          ?`<div style="padding:10px 14px;background:#111;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <span style="font-size:13px;color:#888;">Prescribed (1RM: <strong style="color:#fff;">${orm} lbs</strong>)</span>
+              <span style="font-size:22px;font-weight:800;color:${day.color};">${pw} lbs</span>
+            </div>`
+          :`<div style="padding:10px;background:#1a1a1a;border-radius:8px;color:#888;font-size:13px;text-align:center;margin-bottom:8px;">⚠️ No 1RM for ${day.mainLift} — set it in the 1RM Calc tab</div>`
+        }
+        ${renderLogWidget(`Main_${day.mainLift}`,day.color)}
+      `;
+    }
   }
 
   const isDeload = wave.deload && !wave.test;
@@ -583,10 +621,16 @@ function renderDay(){
       <div style="color:#aaa;font-size:13px;line-height:1.8;">5 min easy cardio (Rower or Assault Bike) → 2 rounds: 10 Hip Circles each side, 10 Leg Swings, 10 Glute Bridges, 10 World's Greatest Stretch → Barbell warm-up: empty bar×10, 40%×5, 55%×3</div>
     </div>
 
+    ${day.mainLift?`
     <div style="margin-bottom:12px;">
       <div class="section-label" style="color:${day.color};">⚡ Main Lift — ${day.mainLift}</div>
       ${mainSection}
     </div>
+    `:`
+    <div style="margin-bottom:12px;padding:10px 14px;background:#1a1a1a;border-radius:8px;border:1px solid #9333ea44;font-size:12px;color:#c084fc;">
+      🎯 No heavy main lift today — this is a pure hypertrophy/pump day. Go straight into accessory work below.
+    </div>
+    `}
 
     <div style="margin-bottom:12px;">
       <div class="section-label" style="color:#555;">🔧 Accessory Work</div>
