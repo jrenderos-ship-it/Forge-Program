@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FORGE">
+<meta name="theme-color" content="#e85d04">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
 <title>FORGE — 10-Week Program</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -39,14 +43,6 @@
   .ex-name { font-weight: 700; font-size: 14px; color: #fff; }
   .ex-note { font-size: 12px; color: #777; margin-top: 2px; }
   .muscle-tag { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; margin-top: 4px; display: inline-block; margin-right: 3px; }
-  .log-btn { background: none; border: 1px dashed #333; border-radius: 6px; padding: 4px 10px; font-size: 12px; color: #555; cursor: pointer; display: flex; align-items: center; gap: 4px; margin-top: 8px; }
-  .log-row { display: flex; gap: 6px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
-  .log-input { width: 80px; padding: 4px 8px; background: #111; border-radius: 6px; color: #fff; font-size: 13px; border: 1px solid #555; }
-  .log-save { border: none; border-radius: 6px; padding: 4px 12px; color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; }
-  .log-cancel { background: #222; border: none; border-radius: 6px; padding: 4px 10px; color: #888; font-size: 12px; cursor: pointer; }
-  .logged-row { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
-  .logged-val { font-size: 14px; font-weight: 700; }
-  .edit-link { background: none; border: none; color: #555; cursor: pointer; font-size: 12px; }
   .cond-box { background: #0f1a0f; border: 1px solid #2a4a2a; border-radius: 10px; padding: 14px; }
   .cond-item { display: flex; gap: 8px; margin-bottom: 6px; font-size: 13px; color: #ccc; }
   .badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 700; }
@@ -69,6 +65,11 @@
   .vol-summary { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
   .vol-pill { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
   .hyp-banner { background: #1a0a2e; border: 1px solid #7c7cff44; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; font-size: 12px; color: #c084fc; line-height: 1.6; }
+  .rest-btn { background: none; border: 1px solid #333; border-radius: 6px; font-size: 10px; color: #888; cursor: pointer; padding: 3px 8px; font-weight: 700; }
+  .set-row { display: flex; gap: 5px; align-items: center; margin-bottom: 5px; flex-wrap: wrap; }
+  .set-input { width: 52px; padding: 5px; background: #111; border: 1px solid #444; border-radius: 5px; color: #fff; font-size: 12px; text-align: center; }
+  .set-label { font-size: 10px; color: #666; width: 34px; flex-shrink: 0; }
+  .set-mini-label { font-size: 9px; color: #555; text-align: center; width: 52px; }
   .hidden { display: none; }
 </style>
 </head>
@@ -91,6 +92,8 @@
     <button class="tab-btn active" onclick="showTab('program')">Program</button>
     <button class="tab-btn" onclick="showTab('calculator')">1RM Calc</button>
     <button class="tab-btn" onclick="showTab('progress')">Progress</button>
+    <button class="tab-btn" onclick="showTab('volume')">Volume</button>
+    <button class="tab-btn" onclick="showTab('bodyweight')">Bodyweight</button>
     <button class="tab-btn backup-tab" onclick="showTab('backup')">💾 Backup</button>
   </div>
 </div>
@@ -99,6 +102,7 @@
 
   <!-- PROGRAM TAB -->
   <div id="tab-program">
+    <div id="backup-reminder"></div>
     <div style="margin-bottom:16px;">
       <div class="section-label" style="color:#888;margin-bottom:10px;">Select Week</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;" id="week-btns"></div>
@@ -150,12 +154,40 @@
     <div id="progress-content"></div>
   </div>
 
+  <!-- VOLUME TAB -->
+  <div id="tab-volume" class="hidden">
+    <h3 style="color:#fff;font-size:18px;font-weight:800;margin-bottom:4px;">Weekly Muscle Volume</h3>
+    <p style="color:#888;font-size:13px;margin-bottom:16px;">Direct accessory sets per muscle group, across all 6 days.</p>
+    <div class="card" id="volume-content"></div>
+  </div>
+
+  <!-- BODYWEIGHT TAB -->
+  <div id="tab-bodyweight" class="hidden">
+    <h3 style="color:#fff;font-size:18px;font-weight:800;margin-bottom:4px;">Bodyweight Log</h3>
+    <p style="color:#888;font-size:13px;margin-bottom:16px;">Track your bodyweight alongside the program.</p>
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;">
+        <div style="flex:1;min-width:130px;">
+          <label style="font-size:11px;color:#888;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px;">Date</label>
+          <input type="date" id="bw-date" class="input-field" style="padding:9px 10px;">
+        </div>
+        <div style="width:100px;">
+          <label style="font-size:11px;color:#888;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px;">Weight</label>
+          <input type="number" id="bw-weight" placeholder="lbs" class="input-field" style="padding:9px 10px;">
+        </div>
+        <button class="btn btn-orange" style="padding:10px 18px;" onclick="logBodyweight()">Log</button>
+      </div>
+    </div>
+    <div id="bw-trend"></div>
+    <div class="card" id="bw-list"></div>
+  </div>
+
   <!-- BACKUP TAB -->
   <div id="tab-backup" class="hidden">
     <h3 style="color:#fff;font-size:18px;font-weight:800;margin-bottom:6px;">Backup & Restore</h3>
     <div style="padding:12px 14px;background:#0a2a0a;border:1px solid #2b934888;border-radius:10px;margin-bottom:16px;">
       <div style="font-size:13px;font-weight:700;color:#4ade80;">✅ Data auto-saves to this browser</div>
-      <p style="font-size:12px;color:#888;margin-top:4px;line-height:1.6;">Your 1RMs and logged weights save automatically. Use manual backup to transfer to another device.</p>
+      <p style="font-size:12px;color:#888;margin-top:4px;line-height:1.6;">Your 1RMs, set logs, notes, and bodyweight save automatically. Use manual backup to transfer to another device.</p>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
       <div class="card" style="cursor:pointer;" onclick="showExport()">
@@ -384,7 +416,7 @@ const DAYS = [
     }
   },
 
-  // ── WEDNESDAY: Full Body — Hypertrophy Pump Day (added at end of array on purpose — see index 5, keeps Thu/Fri/Sat indices stable for existing logs) ──
+  // ── WEDNESDAY: Full Body — Hypertrophy Pump Day (index 5 — keeps Thu/Fri/Sat indices stable for existing logs) ──
   {
     day:"Wednesday", type:"Full Body", focus:"Full Body Hypertrophy — Pump Day",
     color:"#9333ea", icon:"⚡", mainLift:null,
@@ -416,18 +448,25 @@ const DAYS = [
 ];
 
 // Display order for day tabs (chronological Mon–Sat), mapped to the actual DAYS[] array indices above.
-// Wednesday lives at index 5 internally so Thu/Fri/Sat keep their original indices — this keeps
-// all previously logged data correctly matched to the right day.
 const DAY_ORDER = [0,1,5,2,3,4];
 
 // ═══════════════════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════════════════
-const LS_KEY="forge_v7";
-let state={orms:{},logs:{}};
+const LS_KEY="forge_v7"; // unchanged on purpose — preserves all prior saved data
+let state={orms:{},logs:{},setLogs:{},notes:{},bodyweight:{},lastBackup:null};
 let currentWeek=1,currentDay=0,calcORM=0;
+let restTimers={};
 
-function loadState(){ try{ const d=localStorage.getItem(LS_KEY); if(d) state=JSON.parse(d); }catch{} }
+function loadState(){
+  try{
+    const d=localStorage.getItem(LS_KEY);
+    if(d){
+      const parsed=JSON.parse(d);
+      state=Object.assign({orms:{},logs:{},setLogs:{},notes:{},bodyweight:{},lastBackup:null}, parsed);
+    }
+  }catch{}
+}
 function saveState(){ try{ localStorage.setItem(LS_KEY,JSON.stringify(state)); }catch{} }
 
 // ═══════════════════════════════════════════════════════════════
@@ -446,6 +485,14 @@ function restTime(repsStr){
   if(n<=15) return "75 sec";
   return "60 sec";
 }
+function restSeconds(repsStr){
+  const m=String(repsStr).match(/\d+/);
+  const n=m?parseInt(m[0]):12;
+  if(n<=6) return 150;
+  if(n<=10) return 90;
+  if(n<=15) return 75;
+  return 60;
+}
 function computeSets(ex,wave){
   if(wave.deload && !wave.test){ return Math.max(2, Math.round(ex.sets*0.7)); }
   return ex.sets;
@@ -456,14 +503,28 @@ function incrementFor(ex){
   const n=m?parseInt(m[0]):12;
   return n<=8 ? 10 : 5;
 }
-function getBaselineWeight(exName,dayIdx,uptoWeek){
+function getBaselineFromSets(exName,dayIdx,uptoWeek){
   for(let w=uptoWeek-1; w>=1; w--){
     const waveW=WAVES[w-1];
     if(waveW.deload) continue;
     const key=logKey(w,dayIdx,exName);
-    if(state.logs[key]) return {week:w, weight:parseFloat(state.logs[key])};
+    const sets=state.setLogs[key];
+    if(sets && sets.length){
+      const weights=sets.map(s=>parseFloat(s.w)).filter(v=>!isNaN(v));
+      if(weights.length){
+        const maxW=Math.max(...weights);
+        const rpes=sets.map(s=>parseFloat(s.rpe)).filter(v=>!isNaN(v));
+        const avgRPE=rpes.length?(rpes.reduce((a,b)=>a+b,0)/rpes.length):null;
+        return {week:w, weight:maxW, avgRPE};
+      }
+    }
+    if(state.logs[key]) return {week:w, weight:parseFloat(state.logs[key]), avgRPE:null};
   }
   return null;
+}
+function daysSinceBackup(){
+  if(!state.lastBackup) return Infinity;
+  return (Date.now()-new Date(state.lastBackup).getTime())/86400000;
 }
 
 function toast(msg,color="#4ade80"){
@@ -473,18 +534,68 @@ function toast(msg,color="#4ade80"){
 }
 
 // ═══════════════════════════════════════════════════════════════
+// REST TIMER
+// ═══════════════════════════════════════════════════════════════
+function playBeep(){
+  try{
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    const osc=ctx.createOscillator(); const gain=ctx.createGain();
+    osc.frequency.value=880; osc.connect(gain); gain.connect(ctx.destination);
+    gain.gain.setValueAtTime(0.25, ctx.currentTime);
+    osc.start(); osc.stop(ctx.currentTime+0.35);
+  }catch{}
+}
+function startRestTimer(id,seconds){
+  const el=document.getElementById(id);
+  if(!el) return;
+  if(restTimers[id]){ clearInterval(restTimers[id]); }
+  let remaining=seconds;
+  const origLabel=el.dataset.label;
+  el.textContent=`⏱ ${remaining}s`;
+  el.style.color="#4da6ff"; el.style.borderColor="#4da6ff";
+  restTimers[id]=setInterval(()=>{
+    remaining--;
+    if(remaining<=0){
+      clearInterval(restTimers[id]); delete restTimers[id];
+      el.textContent="✓ Go"; el.style.color="#4ade80"; el.style.borderColor="#4ade80";
+      playBeep();
+      if(navigator.vibrate) navigator.vibrate([200,100,200]);
+      setTimeout(()=>{ if(document.getElementById(id)){ el.textContent=origLabel; el.style.color="#888"; el.style.borderColor="#333"; } },2500);
+    } else {
+      el.textContent=`⏱ ${remaining}s`;
+    }
+  },1000);
+}
+
+// ═══════════════════════════════════════════════════════════════
 // TABS
 // ═══════════════════════════════════════════════════════════════
+const TAB_IDS=["program","calculator","progress","volume","bodyweight","backup"];
 function showTab(tab){
-  ["program","calculator","progress","backup"].forEach(t=>{
-    document.getElementById(`tab-${t}`).classList.toggle("hidden",t!==tab);
-  });
-  document.querySelectorAll(".tab-btn").forEach((btn,i)=>{
-    btn.classList.toggle("active",["program","calculator","progress","backup"][i]===tab);
-  });
+  TAB_IDS.forEach(t=>{ document.getElementById(`tab-${t}`).classList.toggle("hidden",t!==tab); });
+  document.querySelectorAll(".tab-btn").forEach((btn,i)=>{ btn.classList.toggle("active",TAB_IDS[i]===tab); });
   if(tab==="progress") renderProgress();
   if(tab==="calculator") renderSavedORMs();
+  if(tab==="volume") renderVolume();
+  if(tab==="bodyweight") renderBodyweight();
   if(tab==="backup") renderBackupSummary();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BACKUP REMINDER (shown at top of Program tab)
+// ═══════════════════════════════════════════════════════════════
+function renderBackupReminder(){
+  const el=document.getElementById("backup-reminder");
+  if(!el) return;
+  const hasData=Object.keys(state.orms).length>0||Object.keys(state.logs).length>0||Object.keys(state.setLogs).length>0;
+  const days=daysSinceBackup();
+  if(hasData && days>=4){
+    const daysText=state.lastBackup?`${Math.floor(days)} days`:"a while";
+    el.innerHTML=`<div onclick="showTab('backup')" style="cursor:pointer;margin-bottom:16px;padding:10px 14px;background:#1a1a0a;border:1px solid #e85d0466;border-radius:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
+      <span style="font-size:13px;color:#e85d04;">💾 It's been ${daysText} since your last backup</span>
+      <span style="font-size:12px;color:#888;">Backup tab →</span>
+    </div>`;
+  } else { el.innerHTML=""; }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -518,24 +629,36 @@ function renderDay(){
   const orm=state.orms[day.mainLift];
   const pw=orm?workingWeight(orm,wave.pct):null;
   const c=iColor(day.conditioning.intensity);
+  const isDeload=wave.deload && !wave.test;
+
+  renderBackupReminder();
 
   const volHTML=day.volSummary?`<div class="vol-summary">${day.volSummary.map(v=>`<span class="vol-pill" style="background:${v.color}22;color:${v.color};">${v.label}</span>`).join("")}</div>`:"";
-
   const hypBanner=day.hypertrophyNote?`<div class="hyp-banner">💜 <strong>Hypertrophy Protocol:</strong> ${day.hypertrophyNote}</div>`:"";
 
+  // ── Main lift block ──
   let mainSection="";
   if(day.mainLift){
+    const mainSets=wave.test?1:wave.sets;
+    const mainSid="main_"+safeId(day.mainLift);
+    const mainKey=logKey(currentWeek,currentDay,`Main_${day.mainLift}`);
     if(wave.test){
       mainSection=`<div style="padding:12px;background:#1a1a2e;border-radius:8px;border:1px solid #7c7cff44;">
         <div style="color:#7c7cff;font-weight:700;">🎯 TEST WEEK — Find Your New 1RM</div>
         <div style="color:#aaa;font-size:13px;margin-top:6px;">50%×5 → 65%×3 → 75%×2 → 85%×1 → 90%×1 → 95%×1 → 100%+×1 attempt</div>
-      </div>`;
+      </div>
+      ${renderSetLogger(mainKey, 1, day.color, mainSid)}`;
     } else {
+      const restId=`rest_${mainSid}`;
       mainSection=`
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;">
-          ${[["Sets",wave.sets],["Reps",wave.reps],["Intensity",Math.round(wave.pct*100)+"%"],["Rest",restTime(wave.reps)]].map(([l,v])=>`
-            <div class="stat-box"><div class="stat-label">${l}</div><div class="stat-val" style="color:${day.color};font-size:16px;">${v}</div></div>
-          `).join("")}
+          <div class="stat-box"><div class="stat-label">Sets</div><div class="stat-val" style="color:${day.color};font-size:16px;">${wave.sets}</div></div>
+          <div class="stat-box"><div class="stat-label">Reps</div><div class="stat-val" style="color:${day.color};font-size:16px;">${wave.reps}</div></div>
+          <div class="stat-box"><div class="stat-label">Intensity</div><div class="stat-val" style="color:${day.color};font-size:16px;">${Math.round(wave.pct*100)}%</div></div>
+          <div class="stat-box">
+            <div class="stat-label">Rest</div>
+            <button class="rest-btn" id="${restId}" data-label="⏱ ${restTime(wave.reps)}" onclick="startRestTimer('${restId}',${restSeconds(wave.reps)})">⏱ ${restTime(wave.reps)}</button>
+          </div>
         </div>
         ${day.mainLiftNote?`<div style="font-size:12px;color:#888;font-style:italic;margin-bottom:8px;">${day.mainLiftNote}</div>`:""}
         ${pw
@@ -545,14 +668,13 @@ function renderDay(){
             </div>`
           :`<div style="padding:10px;background:#1a1a1a;border-radius:8px;color:#888;font-size:13px;text-align:center;margin-bottom:8px;">⚠️ No 1RM for ${day.mainLift} — set it in the 1RM Calc tab</div>`
         }
-        ${renderLogWidget(`Main_${day.mainLift}`,day.color)}
+        ${renderSetLogger(mainKey, mainSets, day.color, mainSid)}
       `;
     }
   }
 
-  const isDeload = wave.deload && !wave.test;
-  const progressionBanner = `<div style="background:#0a1a2a;border:1px solid #1d6fa444;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#4da6ff;line-height:1.6;">📈 <strong>Auto-Progression:</strong> Each exercise below suggests your next weight based on what you logged last time. Log every session so the suggestions stay accurate — hit the rep target with solid form before taking the suggested jump.</div>`;
-  const deloadAccNote = isDeload
+  const progressionBanner=`<div style="background:#0a1a2a;border:1px solid #1d6fa444;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#4da6ff;line-height:1.6;">📈 <strong>Auto-Progression:</strong> Log weight, reps, and RPE for each set. Suggestions below use your last session's top weight and effort (RPE) to recommend the next jump.</div>`;
+  const deloadAccNote=isDeload
     ? `<div style="background:#1a2a1a;border:1px solid #2b934844;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#4ade80;">💚 <strong>Deload Week:</strong> Accessory sets trimmed ~30% below (already reflected in each exercise) — go lighter and prioritize form and recovery.</div>`
     : "";
 
@@ -564,19 +686,27 @@ function renderDay(){
     const tags=(ex.muscles||[]).map(m=>mtag(m)).join("");
     const dSets=computeSets(ex,wave);
     const setsChanged=dSets!==ex.sets;
-    const rest=restTime(ex.reps);
+    const sid=safeId(ex.name);
+    const restId=`rest_${sid}`;
     const tipHTML=ex.tip?`<div style="font-size:11px;color:#ff8c42;font-style:italic;margin-top:5px;">${ex.tip}</div>`:"";
+    const exKey=logKey(currentWeek,currentDay,ex.name);
 
     let suggestionHTML="";
     if(!ex.liftKey){
       if(isTimeBased(ex)){
         suggestionHTML=`<div style="font-size:11px;color:#4ade80;margin-top:5px;">📈 Progress by adding 5-10 sec once the full time feels solid — don't add load first.</div>`;
       } else {
-        const baseline=getBaselineWeight(ex.name,currentDay,currentWeek);
+        const baseline=getBaselineFromSets(ex.name,currentDay,currentWeek);
         if(baseline){
           if(isDeload){
             const suggested=Math.round((baseline.weight*0.85)/2.5)*2.5;
             suggestionHTML=`<div style="font-size:11px;color:#4ade80;margin-top:5px;">📈 Try: <strong>${suggested} lbs</strong> (deload — ease off from ${baseline.weight} lbs)</div>`;
+          } else if(baseline.avgRPE!=null){
+            let suggested, label;
+            if(baseline.avgRPE<=7){ suggested=baseline.weight+incrementFor(ex); label=`RPE ${baseline.avgRPE.toFixed(1)} last time — progress`; }
+            else if(baseline.avgRPE>=9){ suggested=baseline.weight; label=`RPE ${baseline.avgRPE.toFixed(1)} last time — hold steady`; }
+            else { suggested=Math.round((baseline.weight+incrementFor(ex)/2)/2.5)*2.5; label=`RPE ${baseline.avgRPE.toFixed(1)} last time — small bump`; }
+            suggestionHTML=`<div style="font-size:11px;color:#4ade80;margin-top:5px;">📈 Try: <strong>${suggested} lbs</strong> (${label})</div>`;
           } else {
             const suggested=baseline.weight+incrementFor(ex);
             suggestionHTML=`<div style="font-size:11px;color:#4ade80;margin-top:5px;">📈 Try: <strong>${suggested} lbs</strong> (last: ${baseline.weight} lbs, Wk ${baseline.week})</div>`;
@@ -599,12 +729,15 @@ function renderDay(){
         <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex-shrink:0;">
           <span style="font-size:13px;color:${setsChanged?"#7c7cff":"#aaa"};background:#222;padding:3px 10px;border-radius:6px;">${dSets}×${ex.reps}${setsChanged?" 💚":""}</span>
           ${apw?`<span style="font-size:13px;color:${day.color};font-weight:700;">${apw} lbs</span>`:""}
-          <span style="font-size:10px;color:#555;">⏱ Rest ${rest}</span>
+          <button class="rest-btn" id="${restId}" data-label="⏱ Rest ${restTime(ex.reps)}" onclick="startRestTimer('${restId}',${restSeconds(ex.reps)})">⏱ Rest ${restTime(ex.reps)}</button>
         </div>
       </div>
-      ${renderLogWidget(ex.name,day.color)}
+      ${renderSetLogger(exKey, dSets, day.color, sid)}
     </div>`;
   });
+
+  const noteKey=`w${currentWeek}_d${currentDay}`;
+  const noteVal=state.notes[noteKey]||"";
 
   document.getElementById("day-content").innerHTML=`
     <div style="background:linear-gradient(135deg,${day.color}22,#1a1a1a);border:1px solid ${day.color}44;border-radius:12px;padding:14px 16px;margin-bottom:12px;">
@@ -652,27 +785,89 @@ function renderDay(){
       </div>
     </div>
 
-    <div style="margin-bottom:24px;">
+    <div style="margin-bottom:16px;">
       <div class="section-label" style="color:#444;">🧘 Cool-Down</div>
       <div style="color:#aaa;font-size:13px;line-height:1.8;">5–10 min static stretching: Hip flexors (2 min each side), Hamstrings, Pigeon pose (glutes), Quad stretch, Thoracic foam roll. Hold each 30–45 sec.</div>
+    </div>
+
+    <div style="margin-bottom:24px;">
+      <div class="section-label" style="color:#888;">📝 Session Notes</div>
+      <textarea class="input-field" style="min-height:70px;font-family:inherit;font-size:13px;" placeholder="How did today feel? Energy, soreness, anything worth remembering..." oninput="saveNote('${noteKey}', this.value)">${noteVal}</textarea>
     </div>
   `;
 }
 
-function renderLogWidget(exName,color){
-  const key=logKey(currentWeek,currentDay,exName);
-  const val=state.logs[key]||"";
-  const sid=safeId(exName);
-  if(val) return `<div class="logged-row"><span style="font-size:12px;color:#666;">Logged:</span><span class="logged-val" style="color:${color};">${val} lbs</span><button class="edit-link" onclick="editLog('${key}','${color}','${sid}')">edit</button></div>`;
-  return `<button class="log-btn" onclick="startLog('${key}','${color}','${sid}')">＋ Log weight</button>`;
+function saveNote(key,val){ state.notes[key]=val; saveState(); }
+
+// ═══════════════════════════════════════════════════════════════
+// PER-SET LOGGER (weight, reps, RPE)
+// ═══════════════════════════════════════════════════════════════
+function renderSetLogger(key,numSets,color,sid){
+  const existing=state.setLogs[key]||[];
+  const hasData=existing.length>0 && existing.some(s=>s.w);
+  if(hasData){
+    const summary=existing.slice(0,numSets).map((s,i)=>`S${i+1}: ${s.w||"-"}${s.w?" lbs":""}${s.r?` × ${s.r}`:""}${s.rpe?` @RPE ${s.rpe}`:""}`).join("  ·  ");
+    return `<div class="set-logger-slot" style="margin-top:8px;">
+      <div style="font-size:12px;color:${color};line-height:1.8;">${summary}</div>
+      <button class="edit-link" style="background:none;border:none;color:#555;cursor:pointer;font-size:12px;margin-top:2px;" onclick="showSetEditor('${key}','${color}','${sid}',${numSets})">edit sets</button>
+    </div>`;
+  }
+  return `<div class="set-logger-slot" style="margin-top:8px;">
+    <button class="log-btn" style="background:none;border:1px dashed #333;border-radius:6px;padding:4px 10px;font-size:12px;color:#555;cursor:pointer;display:flex;align-items:center;gap:4px;" onclick="showSetEditor('${key}','${color}','${sid}',${numSets})">＋ Log sets (weight · reps · RPE)</button>
+  </div>`;
 }
-function startLog(key,color,sid){ event.target.parentElement.innerHTML=logInputHTML(key,color,sid,""); focusLog(sid); }
-function editLog(key,color,sid){ event.target.parentElement.innerHTML=logInputHTML(key,color,sid,state.logs[key]||""); focusLog(sid); }
-function logInputHTML(key,color,sid,val){
-  return `<div class="log-row"><input type="number" class="log-input" id="li_${sid}" value="${val}" placeholder="lbs" style="border-color:${color};" onkeydown="if(event.key==='Enter') saveLog('${key}','${color}','${sid}')"><span style="font-size:12px;color:#666;">lbs</span><button class="log-save" style="background:${color};" onclick="saveLog('${key}','${color}','${sid}')">Save</button><button class="log-cancel" onclick="renderDay()">✕</button></div>`;
+
+function showSetEditor(key,color,sid,numSets){
+  const existing=state.setLogs[key]||[];
+  let rows="";
+  for(let i=0;i<numSets;i++){
+    const s=existing[i]||{};
+    rows+=`<div class="set-row">
+      <span class="set-label">Set ${i+1}</span>
+      <input type="number" class="set-input" id="sw_${sid}_${i}" placeholder="lbs" value="${s.w||""}">
+      <input type="number" class="set-input" id="sr_${sid}_${i}" placeholder="reps" value="${s.r||""}">
+      <input type="number" class="set-input" id="srpe_${sid}_${i}" placeholder="RPE" min="5" max="10" step="0.5" value="${s.rpe||""}">
+    </div>`;
+  }
+  const header=`<div class="set-row" style="margin-bottom:2px;">
+    <span class="set-label"></span>
+    <span class="set-mini-label">Weight</span>
+    <span class="set-mini-label">Reps</span>
+    <span class="set-mini-label">RPE</span>
+  </div>`;
+  const html=`${header}
+    ${rows}
+    <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;">
+      <button style="font-size:11px;background:none;border:1px solid #444;border-radius:5px;color:#888;padding:4px 8px;cursor:pointer;" onclick="copyFirstWeight('${sid}',${numSets})">↓ same weight all sets</button>
+      <button style="background:${color};border:none;border-radius:6px;padding:5px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;" onclick="saveSetLog('${key}','${sid}',${numSets})">Save</button>
+      <button style="background:#222;border:none;border-radius:6px;padding:5px 12px;color:#888;font-size:12px;cursor:pointer;" onclick="renderDay()">✕</button>
+    </div>`;
+  const wrap=event.target.closest(".set-logger-slot");
+  if(wrap) wrap.outerHTML=`<div class="set-logger-slot" style="margin-top:8px;">${html}</div>`;
 }
-function focusLog(sid){ setTimeout(()=>{ const el=document.getElementById(`li_${sid}`); if(el){el.focus();el.select();} },50); }
-function saveLog(key,color,sid){ const el=document.getElementById(`li_${sid}`); if(!el||!el.value) return; state.logs[key]=el.value; saveState(); toast("✓ Weight logged"); renderDay(); }
+
+function copyFirstWeight(sid,numSets){
+  const first=document.getElementById(`sw_${sid}_0`);
+  if(!first||!first.value) return;
+  for(let i=1;i<numSets;i++){
+    const el=document.getElementById(`sw_${sid}_${i}`);
+    if(el) el.value=first.value;
+  }
+}
+
+function saveSetLog(key,sid,numSets){
+  const arr=[];
+  for(let i=0;i<numSets;i++){
+    const w=document.getElementById(`sw_${sid}_${i}`)?.value||"";
+    const r=document.getElementById(`sr_${sid}_${i}`)?.value||"";
+    const rpe=document.getElementById(`srpe_${sid}_${i}`)?.value||"";
+    arr.push({w,r,rpe});
+  }
+  state.setLogs[key]=arr;
+  saveState();
+  toast("✓ Sets logged");
+  renderDay();
+}
 
 // ═══════════════════════════════════════════════════════════════
 // 1RM CALC
@@ -731,29 +926,135 @@ function renderProgress(){
 }
 
 // ═══════════════════════════════════════════════════════════════
+// VOLUME DASHBOARD
+// ═══════════════════════════════════════════════════════════════
+const VOL_ORDER=["Q","H","G","Ch","Sh","Tr","Bk","Bi","C"];
+function computeWeeklyVolume(week){
+  const wave=WAVES[week-1];
+  const totals={};
+  DAYS.forEach(day=>{
+    day.accessory.forEach(ex=>{
+      if(!ex.muscles) return;
+      const sets=computeSets(ex,wave);
+      ex.muscles.forEach(m=>{ totals[m]=(totals[m]||0)+sets; });
+    });
+  });
+  return totals;
+}
+function renderVolume(){
+  const totals=computeWeeklyVolume(currentWeek);
+  const maxV=Math.max(...Object.values(totals),1);
+  const rows=VOL_ORDER.filter(k=>totals[k]).map(k=>{
+    const m=MT[k]; const v=totals[k]; const pct=Math.round((v/maxV)*100);
+    return `<div style="margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;">
+        <span style="color:${m.color};font-weight:700;">${m.label}</span>
+        <span style="color:#888;">${v} sets/wk</span>
+      </div>
+      <div style="background:#111;border-radius:6px;height:10px;overflow:hidden;">
+        <div style="background:${m.color};height:100%;width:${pct}%;border-radius:6px;"></div>
+      </div>
+    </div>`;
+  }).join("");
+  document.getElementById("volume-content").innerHTML=`
+    <div style="font-size:12px;color:#888;margin-bottom:18px;">Showing <strong style="color:#fff;">Week ${currentWeek}</strong> (${WAVES[currentWeek-1].label}) — change the selected week in the Program tab to see other weeks.</div>
+    ${rows}
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid #222;font-size:11px;color:#555;line-height:1.6;">Counts direct accessory sets tagged by muscle group only. Main compound lifts (squat, deadlift, bench, OHP) add further indirect volume not reflected here. General hypertrophy guidance is roughly 10–20 direct sets/muscle/week.</div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BODYWEIGHT
+// ═══════════════════════════════════════════════════════════════
+function logBodyweight(){
+  const dateEl=document.getElementById("bw-date");
+  const wEl=document.getElementById("bw-weight");
+  const date=dateEl.value || new Date().toISOString().slice(0,10);
+  const w=parseFloat(wEl.value);
+  if(!w){ toast("Enter a weight","#ff4444"); return; }
+  state.bodyweight[date]=w;
+  saveState();
+  wEl.value="";
+  toast("✓ Bodyweight logged");
+  renderBodyweight();
+}
+function deleteBodyweight(date){ delete state.bodyweight[date]; saveState(); renderBodyweight(); }
+function renderBodyweight(){
+  const dateEl=document.getElementById("bw-date");
+  if(dateEl && !dateEl.value) dateEl.value=new Date().toISOString().slice(0,10);
+  const sorted=Object.entries(state.bodyweight).sort((a,b)=> a[0]<b[0]?1:-1);
+  let trendHTML="";
+  if(sorted.length>=2){
+    const chrono=[...sorted].reverse();
+    const first=chrono[0][1], last=chrono[chrono.length-1][1];
+    const diff=(last-first).toFixed(1);
+    const sign=diff>0?"+":"";
+    const color=diff>0?"#facc15":diff<0?"#4ade80":"#888";
+    trendHTML=`<div class="card" style="margin-bottom:16px;"><span style="font-size:13px;color:${color};font-weight:700;">${sign}${diff} lbs</span><span style="font-size:12px;color:#888;"> since ${chrono[0][0]}</span></div>`;
+  }
+  document.getElementById("bw-trend").innerHTML=trendHTML;
+  document.getElementById("bw-list").innerHTML=sorted.length
+    ? sorted.map(([date,w])=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #222;">
+        <span style="font-size:13px;color:#ccc;">${date}</span>
+        <span style="font-size:14px;font-weight:700;color:#fff;">${w} lbs</span>
+        <button onclick="deleteBodyweight('${date}')" style="background:none;border:none;color:#555;font-size:11px;cursor:pointer;">delete</button>
+      </div>`).join("")
+    : `<div style="font-size:13px;color:#444;font-style:italic;padding:8px 0;">No entries yet — log your first weigh-in above</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
 // BACKUP
 // ═══════════════════════════════════════════════════════════════
 function renderBackupSummary(){
-  const oc=Object.keys(state.orms).length,lc=Object.keys(state.logs).length;
-  document.getElementById("backup-summary").textContent=`${oc} 1RMs · ${lc} logged sets`;
-  document.getElementById("current-data-summary").innerHTML=oc===0&&lc===0
+  const oc=Object.keys(state.orms).length;
+  const sc=Object.keys(state.setLogs).length;
+  const bc=Object.keys(state.bodyweight).length;
+  document.getElementById("backup-summary").textContent=`${oc} 1RMs · ${sc} exercises logged · ${bc} bodyweight entries`;
+  document.getElementById("current-data-summary").innerHTML=(oc===0&&sc===0&&bc===0)
     ?`<div style="font-size:13px;color:#444;font-style:italic;">No data yet — enter 1RMs and log workouts first</div>`
     :`<div style="font-size:12px;color:#666;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Current Data</div>
       ${oc>0?`<div style="margin-bottom:8px;"><div style="font-size:12px;color:#555;margin-bottom:6px;">Saved 1RMs</div><div style="display:flex;flex-wrap:wrap;gap:6px;">${MAIN_LIFTS.filter(l=>state.orms[l]).map(l=>`<div style="background:#1a1a1a;border-radius:6px;padding:4px 12px;"><span style="font-size:12px;color:#777;">${l}: </span><span style="font-size:13px;font-weight:700;color:#e85d04;">${state.orms[l]} lbs</span></div>`).join("")}</div></div>`:""}
-      ${lc>0?`<div style="font-size:12px;color:#555;">${lc} workout entries logged</div>`:""}`;
+      ${sc>0?`<div style="font-size:12px;color:#555;margin-bottom:4px;">${sc} exercises with logged sets</div>`:""}
+      ${bc>0?`<div style="font-size:12px;color:#555;">${bc} bodyweight entries</div>`:""}
+      ${state.lastBackup?`<div style="font-size:11px;color:#444;margin-top:6px;">Last backed up: ${new Date(state.lastBackup).toLocaleString()}</div>`:""}`;
 }
-function showExport(){ document.getElementById("export-text").value=JSON.stringify({orms:state.orms,logs:state.logs,savedAt:new Date().toISOString(),v:7}); document.getElementById("export-panel").classList.remove("hidden"); document.getElementById("import-panel").classList.add("hidden"); const b=document.getElementById("copy-btn"); b.textContent="Copy All"; b.style.background="#e85d04"; }
+function showExport(){
+  document.getElementById("export-text").value=JSON.stringify({
+    orms:state.orms, logs:state.logs, setLogs:state.setLogs, notes:state.notes, bodyweight:state.bodyweight,
+    savedAt:new Date().toISOString(), v:8
+  });
+  document.getElementById("export-panel").classList.remove("hidden");
+  document.getElementById("import-panel").classList.add("hidden");
+  const b=document.getElementById("copy-btn"); b.textContent="Copy All"; b.style.background="#e85d04";
+}
 function showImport(){ document.getElementById("import-panel").classList.remove("hidden"); document.getElementById("export-panel").classList.add("hidden"); document.getElementById("import-text").value=""; }
 function hideImport(){ document.getElementById("import-panel").classList.add("hidden"); }
 async function copyBackup(){
   const text=document.getElementById("export-text").value; const btn=document.getElementById("copy-btn");
-  try{ if(navigator.clipboard&&navigator.clipboard.writeText){ await navigator.clipboard.writeText(text); } else { document.getElementById("export-text").select(); document.execCommand("copy"); } btn.textContent="✓ Copied!"; btn.style.background="#2b9348"; setTimeout(()=>{ btn.textContent="Copy All"; btn.style.background="#e85d04"; },2500); }
-  catch{ document.getElementById("export-text").select(); toast("Select text manually then copy","#ffcc00"); }
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){ await navigator.clipboard.writeText(text); }
+    else { document.getElementById("export-text").select(); document.execCommand("copy"); }
+    btn.textContent="✓ Copied!"; btn.style.background="#2b9348";
+    state.lastBackup=new Date().toISOString(); saveState(); renderBackupSummary();
+    setTimeout(()=>{ btn.textContent="Copy All"; btn.style.background="#e85d04"; },2500);
+  } catch{ document.getElementById("export-text").select(); toast("Select text manually then copy","#ffcc00"); }
 }
 function restoreBackup(){
   const text=document.getElementById("import-text").value.trim();
-  try{ const p=JSON.parse(text); if(p.orms!==undefined&&p.logs!==undefined){ state.orms=p.orms||{}; state.logs=p.logs||{}; saveState(); toast("✓ Data restored!"); hideImport(); renderBackupSummary(); setTimeout(()=>showTab("program"),600); } else { toast("⚠️ Invalid backup","#ff8c42"); } }
-  catch{ toast("⚠️ Could not read backup — paste the full text","#ff4444"); }
+  try{
+    const p=JSON.parse(text);
+    if(p.orms!==undefined){
+      state.orms=p.orms||{};
+      state.logs=p.logs||{};
+      state.setLogs=p.setLogs||{};
+      state.notes=p.notes||{};
+      state.bodyweight=p.bodyweight||{};
+      saveState();
+      toast("✓ Data restored!"); hideImport(); renderBackupSummary();
+      setTimeout(()=>showTab("program"),600);
+    } else { toast("⚠️ Invalid backup","#ff8c42"); }
+  } catch{ toast("⚠️ Could not read backup — paste the full text","#ff4444"); }
 }
 
 // ═══════════════════════════════════════════════════════════════
