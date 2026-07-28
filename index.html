@@ -1052,6 +1052,13 @@ function restoreBackup(){
       state.bodyweight=p.bodyweight||{};
       saveState();
       toast("✓ Data restored!"); hideImport(); renderBackupSummary();
+      // Force every view that reads from state to redraw immediately —
+      // otherwise the Program/Calculator tabs keep showing stale content.
+      renderSavedORMs();
+      renderWeekBtns();
+      renderWeekInfo();
+      renderDayBtns();
+      renderDay();
       setTimeout(()=>showTab("program"),600);
     } else { toast("⚠️ Invalid backup","#ff8c42"); }
   } catch{ toast("⚠️ Could not read backup — paste the full text","#ff4444"); }
