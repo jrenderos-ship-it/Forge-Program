@@ -470,10 +470,19 @@ function loadState(){
 }
 function saveState(){ try{ localStorage.setItem(LS_KEY,JSON.stringify(state)); }catch{} }
 
-// One-time-per-key migration: old single-weight logs (from before per-set logging existed)
-// get converted into a Set-1 entry in the new setLogs format so they actually show up on screen.
-// Safe to call repeatedly — skips any key that already has real setLogs data.
+// Migration: old single-weight logs (from before per-set logging existed) get converted
+// into a Set-1 entry in the new setLogs format so they actually show up on screen.
+// Two passes:
+//  1) Direct key match — covers logs already saved under today's exact key format.
+//  2) Legacy whitespace-only key format — covers logs saved back when the app only
+//     converted spaces to underscores (before parentheses/hyphens/slashes were also
+//     converted). Only recovers data for exercises that still exist in the same day
+//     slot today; exercises that were renamed, moved days, or removed can't be
+//     recovered since there's no current slot to attach them to.
+function legacyKeyWS(w,d,n){ return `w${w}_d${d}_${n.replace(/\s/g,"_")}`; }
+
 function migrateLegacyLogs(){
+  // Pass 1: anything already sitting under a key that matches exactly
   Object.keys(state.logs||{}).forEach(key=>{
     const val=state.logs[key];
     const already=state.setLogs[key];
@@ -481,6 +490,23 @@ function migrateLegacyLogs(){
       state.setLogs[key]=[{w:String(val), r:"", rpe:""}];
     }
   });
+  // Pass 2: walk every exercise that currently exists and check the old \s-only key format too
+  for(let w=1; w<=10; w++){
+    DAYS.forEach((day,d)=>{
+      const names=[];
+      if(day.mainLift) names.push(`Main_${day.mainLift}`);
+      day.accessory.forEach(ex=>names.push(ex.name));
+      names.forEach(n=>{
+        const curKey=logKey(w,d,n);
+        const already=state.setLogs[curKey];
+        if(already && already.length && already.some(s=>s.w)) return;
+        const wsKey=legacyKeyWS(w,d,n);
+        if(wsKey!==curKey && state.logs[wsKey]!==undefined && state.logs[wsKey]!==""){
+          state.setLogs[curKey]=[{w:String(state.logs[wsKey]), r:"", rpe:""}];
+        }
+      });
+    });
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
