@@ -466,8 +466,22 @@ function loadState(){
       state=Object.assign({orms:{},logs:{},setLogs:{},notes:{},bodyweight:{},lastBackup:null}, parsed);
     }
   }catch{}
+  migrateLegacyLogs();
 }
 function saveState(){ try{ localStorage.setItem(LS_KEY,JSON.stringify(state)); }catch{} }
+
+// One-time-per-key migration: old single-weight logs (from before per-set logging existed)
+// get converted into a Set-1 entry in the new setLogs format so they actually show up on screen.
+// Safe to call repeatedly — skips any key that already has real setLogs data.
+function migrateLegacyLogs(){
+  Object.keys(state.logs||{}).forEach(key=>{
+    const val=state.logs[key];
+    const already=state.setLogs[key];
+    if(val && (!already || !already.length || !already.some(s=>s.w))){
+      state.setLogs[key]=[{w:String(val), r:"", rpe:""}];
+    }
+  });
+}
 
 // ═══════════════════════════════════════════════════════════════
 // HELPERS
@@ -1050,6 +1064,7 @@ function restoreBackup(){
       state.setLogs=p.setLogs||{};
       state.notes=p.notes||{};
       state.bodyweight=p.bodyweight||{};
+      migrateLegacyLogs();
       saveState();
       toast("✓ Data restored!"); hideImport(); renderBackupSummary();
       // Force every view that reads from state to redraw immediately —
