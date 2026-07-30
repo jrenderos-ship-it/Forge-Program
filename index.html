@@ -66,6 +66,8 @@
   .vol-pill { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
   .hyp-banner { background: #1a0a2e; border: 1px solid #7c7cff44; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; font-size: 12px; color: #c084fc; line-height: 1.6; }
   .rest-btn { background: none; border: 1px solid #333; border-radius: 6px; font-size: 10px; color: #888; cursor: pointer; padding: 3px 8px; font-weight: 700; }
+  @keyframes restFlash { 0%,100% { background: transparent; } 50% { background: #4ade80; } }
+  .rest-btn.flash { animation: restFlash 0.5s ease-in-out 3; }
   .set-row { display: flex; gap: 5px; align-items: center; margin-bottom: 5px; flex-wrap: wrap; }
   .set-input { width: 52px; padding: 5px; background: #111; border: 1px solid #444; border-radius: 5px; color: #fff; font-size: 12px; text-align: center; }
   .set-label { font-size: 10px; color: #666; width: 34px; flex-shrink: 0; }
@@ -103,6 +105,7 @@
   <!-- PROGRAM TAB -->
   <div id="tab-program">
     <div id="backup-reminder"></div>
+    <div id="resume-banner"></div>
     <div style="margin-bottom:16px;">
       <div class="section-label" style="color:#888;margin-bottom:10px;">Select Week</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;" id="week-btns"></div>
@@ -373,6 +376,7 @@ const DAYS = [
       {name:"KB Farmer's Carry", sets:4, reps:"40m", note:"Heavy — stand tall, grip and trap focus", muscles:["Bk"]},
       {group:"Biceps",
        name:"Barbell Curl", sets:4, reps:"10", note:"Full ROM, no swinging, 3-sec eccentric — supinate at top", muscles:["Bi"]},
+      {name:"Preacher Curl (EZ-Bar or DB)", sets:3, reps:"10-12", note:"Preacher bench isolates the bicep completely — no cheating, full stretch at bottom, hard squeeze at top", muscles:["Bi"]},
       {name:"Incline DB Curl", sets:3, reps:"12", note:"Bench at 45° — maximize the stretch at the bottom", muscles:["Bi"]},
       {name:"Cable Hammer Curl (Rope)", sets:3, reps:"12", note:"Neutral grip — brachialis and brachioradialis focus", muscles:["Bi"]},
       {name:"Concentration Curl (DB)", sets:3, reps:"12 each", note:"Elbow on inner thigh — peak contraction, squeeze hard", muscles:["Bi"]},
@@ -435,6 +439,7 @@ const DAYS = [
        name:"DB Lateral Raise", sets:3, reps:"15", note:"Light weight, strict form, feel the burn — not about the load", muscles:["Sh"]},
       {group:"Arms",
        name:"EZ-Bar Curl", sets:3, reps:"12", note:"Controlled tempo, full ROM", muscles:["Bi"]},
+      {name:"Cable Curl (Straight Bar)", sets:3, reps:"12", note:"Standing, elbows pinned to sides — constant cable tension gives a different feel than free weights", muscles:["Bi"]},
       {name:"Cable Tricep Pushdown (Rope)", sets:3, reps:"12", note:"Full extension, squeeze at bottom", muscles:["Tr"]},
       {group:"Core",
        name:"Hanging Knee Raises", sets:3, reps:"15", note:"Controlled, no swinging", muscles:["C"]},
@@ -454,7 +459,7 @@ const DAY_ORDER = [0,1,5,2,3,4];
 // STATE
 // ═══════════════════════════════════════════════════════════════
 const LS_KEY="forge_v7"; // unchanged on purpose — preserves all prior saved data
-let state={orms:{},logs:{},setLogs:{},notes:{},bodyweight:{},lastBackup:null};
+let state={orms:{},logs:{},setLogs:{},notes:{},bodyweight:{},lastBackup:null,progress:{week:1,day:0,completed:{}}};
 let currentWeek=1,currentDay=0,calcORM=0;
 let restTimers={};
 
@@ -463,7 +468,9 @@ function loadState(){
     const d=localStorage.getItem(LS_KEY);
     if(d){
       const parsed=JSON.parse(d);
-      state=Object.assign({orms:{},logs:{},setLogs:{},notes:{},bodyweight:{},lastBackup:null}, parsed);
+      state=Object.assign({orms:{},logs:{},setLogs:{},notes:{},bodyweight:{},lastBackup:null,progress:{week:1,day:0,completed:{}}}, parsed);
+      if(!state.progress) state.progress={week:1,day:0,completed:{}};
+      if(!state.progress.completed) state.progress.completed={};
     }
   }catch{}
   migrateLegacyLogs();
@@ -534,7 +541,9 @@ function restSeconds(repsStr){
   return 60;
 }
 function computeSets(ex,wave){
-  if(wave.deload && !wave.test){ return Math.max(2, Math.round(ex.sets*0.7)); }
+  // Any deload week (including Week 10's test/deload combo) trims accessory volume —
+  // the test-week flag only changes the MAIN LIFT protocol, not accessory tapering.
+  if(wave.deload){ return Math.max(2, Math.round(ex.sets*0.7)); }
   return ex.sets;
 }
 function isTimeBased(ex){ return /sec|hold/i.test(ex.reps) || /Plank|Deadbug/i.test(ex.name); }
@@ -576,16 +585,31 @@ function toast(msg,color="#4ade80"){
 // ═══════════════════════════════════════════════════════════════
 // REST TIMER
 // ═══════════════════════════════════════════════════════════════
+// iOS Safari requires audio to be created/resumed synchronously inside a real user
+// tap — it silently blocks audio triggered later from a setInterval callback. So we
+// create ONE shared AudioContext and unlock/resume it the instant the button is
+// tapped (unlockAudio), then just reuse that already-running context later when the
+// timer hits zero. iOS Safari also has never supported navigator.vibrate() at all —
+// we still call it (harmless, works on Android), but the visual flash is the real
+// cross-platform fallback everyone actually sees.
+let audioCtx=null;
+function unlockAudio(){
+  try{
+    if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==="suspended") audioCtx.resume();
+  }catch{}
+}
 function playBeep(){
   try{
-    const ctx=new (window.AudioContext||window.webkitAudioContext)();
-    const osc=ctx.createOscillator(); const gain=ctx.createGain();
-    osc.frequency.value=880; osc.connect(gain); gain.connect(ctx.destination);
-    gain.gain.setValueAtTime(0.25, ctx.currentTime);
-    osc.start(); osc.stop(ctx.currentTime+0.35);
+    if(!audioCtx) return;
+    const osc=audioCtx.createOscillator(); const gain=audioCtx.createGain();
+    osc.frequency.value=880; osc.connect(gain); gain.connect(audioCtx.destination);
+    gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+    osc.start(); osc.stop(audioCtx.currentTime+0.35);
   }catch{}
 }
 function startRestTimer(id,seconds){
+  unlockAudio(); // must happen synchronously inside the tap — not later
   const el=document.getElementById(id);
   if(!el) return;
   if(restTimers[id]){ clearInterval(restTimers[id]); }
@@ -598,9 +622,15 @@ function startRestTimer(id,seconds){
     if(remaining<=0){
       clearInterval(restTimers[id]); delete restTimers[id];
       el.textContent="✓ Go"; el.style.color="#4ade80"; el.style.borderColor="#4ade80";
+      el.classList.add("flash");
       playBeep();
       if(navigator.vibrate) navigator.vibrate([200,100,200]);
-      setTimeout(()=>{ if(document.getElementById(id)){ el.textContent=origLabel; el.style.color="#888"; el.style.borderColor="#333"; } },2500);
+      setTimeout(()=>{
+        if(document.getElementById(id)){
+          el.textContent=origLabel; el.style.color="#888"; el.style.borderColor="#333";
+          el.classList.remove("flash");
+        }
+      },2500);
     } else {
       el.textContent=`⏱ ${remaining}s`;
     }
@@ -663,15 +693,58 @@ function renderDayBtns(){
 function selectWeek(w){ currentWeek=w; renderWeekBtns(); renderWeekInfo(); renderDay(); }
 function selectDay(d){ currentDay=d; renderDayBtns(); renderDay(); }
 
+// ── Day completion & auto-resume ──────────────────────────────────────────────
+// Marking a day complete/skipped advances the "resume pointer" (state.progress)
+// to the next day in chronological order, and the app opens straight to that
+// pointer next time — instead of always resetting to Week 1 Monday. Browsing
+// around manually (selectWeek/selectDay above) never touches this pointer.
+function markDayStatus(status){
+  const key=`w${currentWeek}_d${currentDay}`;
+  state.progress.completed[key]={status, at:new Date().toISOString()};
+  advanceToNextDay();
+}
+function undoDayStatus(key){
+  delete state.progress.completed[key];
+  saveState();
+  renderDay();
+}
+function advanceToNextDay(){
+  const pos=DAY_ORDER.indexOf(currentDay);
+  if(pos<DAY_ORDER.length-1){
+    currentDay=DAY_ORDER[pos+1];
+  } else {
+    currentDay=DAY_ORDER[0];
+    if(currentWeek<10){ currentWeek+=1; }
+    else { toast("🎉 10-week program complete! Great work.","#4ade80"); }
+  }
+  state.progress.week=currentWeek;
+  state.progress.day=currentDay;
+  saveState();
+  renderWeekBtns(); renderWeekInfo(); renderDayBtns(); renderDay();
+}
+function jumpToCurrent(){
+  currentWeek=state.progress.week; currentDay=state.progress.day;
+  renderWeekBtns(); renderWeekInfo(); renderDayBtns(); renderDay();
+}
+function renderResumeBanner(){
+  const el=document.getElementById("resume-banner");
+  if(!el) return;
+  const atResume=currentWeek===state.progress.week && currentDay===state.progress.day;
+  el.innerHTML=atResume?"":`<div onclick="jumpToCurrent()" style="cursor:pointer;margin-bottom:12px;padding:8px 14px;background:#0a1a2a;border:1px solid #1d6fa466;border-radius:8px;font-size:12px;color:#4da6ff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
+    <span>👀 Browsing — tap to jump back to your current workout</span><span>→</span>
+  </div>`;
+}
+
 function renderDay(){
   const day=DAYS[currentDay];
   const wave=WAVES[currentWeek-1];
   const orm=state.orms[day.mainLift];
   const pw=orm?workingWeight(orm,wave.pct):null;
   const c=iColor(day.conditioning.intensity);
-  const isDeload=wave.deload && !wave.test;
+  const isDeload=wave.deload;
 
   renderBackupReminder();
+  renderResumeBanner();
 
   const volHTML=day.volSummary?`<div class="vol-summary">${day.volSummary.map(v=>`<span class="vol-pill" style="background:${v.color}22;color:${v.color};">${v.label}</span>`).join("")}</div>`:"";
   const hypBanner=day.hypertrophyNote?`<div class="hyp-banner">💜 <strong>Hypertrophy Protocol:</strong> ${day.hypertrophyNote}</div>`:"";
@@ -779,6 +852,24 @@ function renderDay(){
   const noteKey=`w${currentWeek}_d${currentDay}`;
   const noteVal=state.notes[noteKey]||"";
 
+  const dayStatusKey=`w${currentWeek}_d${currentDay}`;
+  const dayStatus=state.progress.completed[dayStatusKey];
+  let statusHTML;
+  if(dayStatus){
+    const dateStr=new Date(dayStatus.at).toLocaleDateString();
+    const icon=dayStatus.status==="complete"?"✅":"⏭️";
+    const label=dayStatus.status==="complete"?"Completed":"Skipped";
+    statusHTML=`<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px;padding:10px 14px;background:#0a2a0a;border:1px solid #2b934866;border-radius:8px;">
+      <span style="font-size:13px;color:#4ade80;">${icon} ${label} — ${dateStr}</span>
+      <button onclick="undoDayStatus('${dayStatusKey}')" style="background:none;border:none;color:#888;font-size:12px;cursor:pointer;text-decoration:underline;">undo</button>
+    </div>`;
+  } else {
+    statusHTML=`<div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+      <button onclick="markDayStatus('complete')" style="flex:1;min-width:140px;padding:12px;background:#2b9348;border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">✓ Mark Day Complete</button>
+      <button onclick="markDayStatus('skip')" style="padding:12px 18px;background:#222;border:none;border-radius:8px;color:#aaa;font-size:14px;font-weight:600;cursor:pointer;">⏭ Skip</button>
+    </div>`;
+  }
+
   document.getElementById("day-content").innerHTML=`
     <div style="background:linear-gradient(135deg,${day.color}22,#1a1a1a);border:1px solid ${day.color}44;border-radius:12px;padding:14px 16px;margin-bottom:12px;">
       <span style="font-size:11px;color:${day.color};font-weight:700;letter-spacing:2px;text-transform:uppercase;">${day.type}</span>
@@ -786,6 +877,7 @@ function renderDay(){
       <span style="font-size:13px;color:#aaa;">${day.focus}</span>
     </div>
 
+    ${statusHTML}
     ${volHTML}
     ${hypBanner}
 
@@ -821,7 +913,7 @@ function renderDay(){
         </div>
         ${day.conditioning.workouts.map(w=>`<div class="cond-item"><span style="color:#4ade80;flex-shrink:0;">→</span><span>${w}</span></div>`).join("")}
         <div style="margin-top:8px;font-size:12px;color:#666;">Equipment: ${day.conditioning.equipment}</div>
-        ${wave.deload&&!wave.test?`<div style="margin-top:8px;padding:8px 10px;background:#1a2a1a;border-radius:6px;font-size:12px;color:#4ade80;">💚 Deload Week: Skip the finisher entirely or do 5 min easy walking.</div>`:""}
+        ${wave.deload?`<div style="margin-top:8px;padding:8px 10px;background:#1a2a1a;border-radius:6px;font-size:12px;color:#4ade80;">💚 Deload Week: Skip the finisher entirely or do 5 min easy walking.</div>`:""}
       </div>
     </div>
 
@@ -859,9 +951,24 @@ function renderSetLogger(key,numSets,color,sid){
 
 function showSetEditor(key,color,sid,numSets){
   const existing=state.setLogs[key]||[];
+  let rowSource=existing;
+  let prefillWeek=null;
+  if(!existing.length || !existing.some(s=>s.w)){
+    // No data logged yet this week — look for the most recent earlier week's numbers
+    // for this exact exercise/day slot and use them as an editable starting point.
+    const prefix=`w${currentWeek}_d${currentDay}_`;
+    if(key.startsWith(prefix)){
+      const suffix=key.slice(prefix.length);
+      for(let w=currentWeek-1; w>=1; w--){
+        const pastKey=`w${w}_d${currentDay}_${suffix}`;
+        const pastSets=state.setLogs[pastKey];
+        if(pastSets && pastSets.length && pastSets.some(s=>s.w)){ rowSource=pastSets; prefillWeek=w; break; }
+      }
+    }
+  }
   let rows="";
   for(let i=0;i<numSets;i++){
-    const s=existing[i]||{};
+    const s=rowSource[i]||{};
     rows+=`<div class="set-row">
       <span class="set-label">Set ${i+1}</span>
       <input type="number" class="set-input" id="sw_${sid}_${i}" placeholder="lbs" value="${s.w||""}">
@@ -869,13 +976,14 @@ function showSetEditor(key,color,sid,numSets){
       <input type="number" class="set-input" id="srpe_${sid}_${i}" placeholder="RPE" min="5" max="10" step="0.5" value="${s.rpe||""}">
     </div>`;
   }
+  const prefillNote=prefillWeek?`<div style="font-size:11px;color:#4da6ff;margin-bottom:4px;">↻ Prefilled from Week ${prefillWeek} — adjust and save, or clear if starting fresh.</div>`:"";
   const header=`<div class="set-row" style="margin-bottom:2px;">
     <span class="set-label"></span>
     <span class="set-mini-label">Weight</span>
     <span class="set-mini-label">Reps</span>
     <span class="set-mini-label">RPE</span>
   </div>`;
-  const html=`${header}
+  const html=`${prefillNote}${header}
     ${rows}
     <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;">
       <button style="font-size:11px;background:none;border:1px solid #444;border-radius:5px;color:#888;padding:4px 8px;cursor:pointer;" onclick="copyFirstWeight('${sid}',${numSets})">↓ same weight all sets</button>
@@ -943,6 +1051,27 @@ function renderSavedORMs(){
 // ═══════════════════════════════════════════════════════════════
 // PROGRESS
 // ═══════════════════════════════════════════════════════════════
+// Maps each main lift to where its real logged performance lives, so the Progress
+// tab can show "Actual" next to "Target". Front Squat has no dedicated main-lift day
+// (it's an accessory item tied to its own 1RM), so it reads straight from Monday's
+// accessory log instead of a "Main_" key. Back Squat trains on both Monday (heavy,
+// wave-loaded) and Saturday (lighter/speed) — Monday is the true progression signal.
+const MAIN_LIFT_SOURCE = {
+  "Back Squat":      {dayIdx:0, keyName:"Main_Back Squat"},
+  "Deadlift":        {dayIdx:2, keyName:"Main_Deadlift"},
+  "Bench Press":     {dayIdx:1, keyName:"Main_Bench Press"},
+  "Overhead Press":  {dayIdx:3, keyName:"Main_Overhead Press"},
+  "Front Squat":     {dayIdx:0, keyName:"Front Squat"},
+};
+function getActualForWeek(lift,week){
+  const src=MAIN_LIFT_SOURCE[lift];
+  if(!src) return null;
+  const key=logKey(week,src.dayIdx,src.keyName);
+  const sets=state.setLogs[key];
+  if(!sets||!sets.length) return null;
+  const weights=sets.map(s=>parseFloat(s.w)).filter(v=>!isNaN(v));
+  return weights.length?Math.max(...weights):null;
+}
 function renderProgress(){
   document.getElementById("progress-content").innerHTML=MAIN_LIFTS.map(lift=>{
     const orm=state.orms[lift];
@@ -952,14 +1081,24 @@ function renderProgress(){
         <span style="font-size:13px;color:${orm?"#e85d04":"#555"};">${orm?`1RM: ${orm} lbs`:"No 1RM saved"}</span>
       </div>
       ${orm?`<div style="overflow-x:auto;"><table class="progress-table">
-        <thead><tr><th>Wk</th><th>Sets×Reps</th><th>%</th><th>Weight</th><th>Phase</th></tr></thead>
-        <tbody>${WAVES.map(w=>`<tr style="background:${w.deload?"#0f0f1a":"transparent"};">
+        <thead><tr><th>Wk</th><th>Sets×Reps</th><th>%</th><th>Target</th><th>Actual</th><th>Phase</th></tr></thead>
+        <tbody>${WAVES.map(w=>{
+          const actual=getActualForWeek(lift,w.week);
+          const target=workingWeight(orm,w.pct);
+          let actualHTML="—";
+          if(actual!=null){
+            const color=actual>=target?"#4ade80":actual>=target*0.9?"#facc15":"#ff8c42";
+            actualHTML=`<span style="color:${color};font-weight:700;">${actual} lbs</span>`;
+          }
+          return `<tr style="background:${w.deload?"#0f0f1a":"transparent"};">
           <td style="font-weight:700;color:${w.deload?"#7c7cff":"#fff"};">${w.week}</td>
           <td style="color:#ccc;">${w.test?"1×1 (MAX)":`${w.sets}×${w.reps}`}</td>
           <td style="color:#888;">${Math.round(w.pct*100)}%</td>
-          <td style="font-weight:700;color:${w.test?"#ff4444":"#e85d04"};">${w.test?"MAX":`${workingWeight(orm,w.pct)} lbs`}</td>
+          <td style="font-weight:700;color:${w.test?"#ff4444":"#e85d04"};">${w.test?"MAX":`${target} lbs`}</td>
+          <td>${actualHTML}</td>
           <td><span class="badge" style="background:${w.test?"#ff444422":w.deload?"#7c7cff22":"#e85d0422"};color:${w.test?"#ff4444":w.deload?"#7c7cff":"#e85d04"};">${w.test?"TEST":w.deload?"DELOAD":"BUILD"}</span></td>
-        </tr>`).join("")}</tbody>
+        </tr>`;
+        }).join("")}</tbody>
       </table></div>`:`<div style="padding:12px;background:#111;border-radius:8px;color:#555;font-size:13px;text-align:center;">Save a 1RM in the calculator to see your loading plan</div>`}
     </div>`;
   }).join("");
@@ -1062,7 +1201,7 @@ function renderBackupSummary(){
 function showExport(){
   document.getElementById("export-text").value=JSON.stringify({
     orms:state.orms, logs:state.logs, setLogs:state.setLogs, notes:state.notes, bodyweight:state.bodyweight,
-    savedAt:new Date().toISOString(), v:8
+    progress:state.progress, savedAt:new Date().toISOString(), v:9
   });
   document.getElementById("export-panel").classList.remove("hidden");
   document.getElementById("import-panel").classList.add("hidden");
@@ -1082,6 +1221,10 @@ async function copyBackup(){
 }
 function restoreBackup(){
   const text=document.getElementById("import-text").value.trim();
+  const hasCurrentData=Object.keys(state.orms).length>0||Object.keys(state.setLogs).length>0||Object.keys(state.logs).length>0;
+  if(hasCurrentData && !confirm("This will overwrite your current data with this backup. This can't be undone. Continue?")){
+    return;
+  }
   try{
     const p=JSON.parse(text);
     if(p.orms!==undefined){
@@ -1090,8 +1233,11 @@ function restoreBackup(){
       state.setLogs=p.setLogs||{};
       state.notes=p.notes||{};
       state.bodyweight=p.bodyweight||{};
+      state.progress=p.progress||{week:1,day:0,completed:{}};
       migrateLegacyLogs();
       saveState();
+      currentWeek=state.progress.week||1;
+      currentDay=state.progress.day||0;
       toast("✓ Data restored!"); hideImport(); renderBackupSummary();
       // Force every view that reads from state to redraw immediately —
       // otherwise the Program/Calculator tabs keep showing stale content.
@@ -1109,6 +1255,8 @@ function restoreBackup(){
 // INIT
 // ═══════════════════════════════════════════════════════════════
 loadState();
+currentWeek=state.progress.week||1;
+currentDay=state.progress.day||0;
 populateLiftSelects();
 renderWeekBtns();
 renderWeekInfo();
