@@ -775,10 +775,34 @@ function renderDay(){
         </div>
         ${day.mainLiftNote?`<div style="font-size:12px;color:#888;font-style:italic;margin-bottom:8px;">${day.mainLiftNote}</div>`:""}
         ${pw
-          ?`<div style="padding:10px 14px;background:#111;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-              <span style="font-size:13px;color:#888;">Prescribed (1RM: <strong style="color:#fff;">${orm} lbs</strong>)</span>
-              <span style="font-size:22px;font-weight:800;color:${day.color};">${pw} lbs</span>
-            </div>`
+          ?(()=>{
+              const mainBaseline=getBaselineFromSets(`Main_${day.mainLift}`,currentDay,currentWeek);
+              let suggestBlock="";
+              if(mainBaseline){
+                let adjusted=pw, note, noteColor="#888";
+                if(mainBaseline.avgRPE!=null){
+                  if(mainBaseline.avgRPE<=6.5){ adjusted=pw+5; note=`Last week felt easy (RPE ${mainBaseline.avgRPE.toFixed(1)}) — nudged +5 lbs above plan`; noteColor="#4ade80"; }
+                  else if(mainBaseline.avgRPE>=9){ adjusted=pw-5; note=`Last week was a grind (RPE ${mainBaseline.avgRPE.toFixed(1)}) — nudged -5 lbs below plan. OK to stay at the planned weight instead and just focus on bar speed.`; noteColor="#ff8c42"; }
+                  else { note=`Last week RPE ${mainBaseline.avgRPE.toFixed(1)} — right on target, sticking with the plan`; noteColor="#888"; }
+                } else {
+                  note=`Last logged: ${mainBaseline.weight} lbs (Wk ${mainBaseline.week}) — no RPE recorded, so no adjustment applied`;
+                }
+                suggestBlock=`<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid #222;">
+                  <span style="font-size:13px;color:${day.color};font-weight:700;">This Week's Suggestion</span>
+                  <span style="font-size:24px;font-weight:900;color:${day.color};">${adjusted} lbs</span>
+                </div>
+                <div style="font-size:11px;color:${noteColor};margin-top:4px;">${note}</div>`;
+              } else {
+                suggestBlock=`<div style="font-size:11px;color:#555;margin-top:8px;padding-top:8px;border-top:1px solid #222;font-style:italic;">📝 Log this week's sets with RPE to start getting adjusted suggestions next week</div>`;
+              }
+              return `<div style="padding:10px 14px;background:#111;border-radius:8px;margin-bottom:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:13px;color:#888;">Planned (Wave, 1RM: <strong style="color:#fff;">${orm} lbs</strong>)</span>
+                  <span style="font-size:16px;font-weight:700;color:#666;">${pw} lbs</span>
+                </div>
+                ${suggestBlock}
+              </div>`;
+            })()
           :`<div style="padding:10px;background:#1a1a1a;border-radius:8px;color:#888;font-size:13px;text-align:center;margin-bottom:8px;">⚠️ No 1RM for ${day.mainLift} — set it in the 1RM Calc tab</div>`
         }
         ${renderSetLogger(mainKey, mainSets, day.color, mainSid)}
