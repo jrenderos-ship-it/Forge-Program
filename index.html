@@ -276,6 +276,7 @@ const DAYS = [
       {group:"Quad Strength",
        name:"Front Squat", sets:4, reps:"5", note:"65% of Front Squat 1RM — upright torso, elbows high", liftKey:"Front Squat", pct:0.65, muscles:["Q"]},
       {name:"DB/KB Goblet Squat", sets:4, reps:"12", note:"Heavy DB or KB held at chest, full depth, elbows inside knees at bottom", muscles:["Q","G"]},
+      {name:"DB Box Step-Ups", sets:3, reps:"10 each", note:"Box or bench at knee height — drive up through the front heel, minimal push from the trailing leg, very quad-dominant", muscles:["Q","G"]},
       {name:"KB Front-Rack Walking Lunges", sets:3, reps:"20 total", note:"Rack KB(s) at chest, controlled steps, upright torso — heavy quad/glute demand", muscles:["Q","G"]},
       {name:"Leg Extension (Machine)", sets:4, reps:"15", note:"Full ROM, squeeze hard at top, slow eccentric", muscles:["Q"]},
       {group:"Glute Accessory",
@@ -339,11 +340,9 @@ const DAYS = [
       {name:"Slider/Towel Hamstring Curl", sets:4, reps:"12", note:"Lying on back, heels on sliders or towel — curl heels to glutes, no machine needed", muscles:["H"]},
       {name:"Stability Ball Hamstring Curl", sets:3, reps:"15", note:"Heels on ball, hips up — curl ball toward glutes, control the return", muscles:["H"]},
       {name:"Barbell Good Morning", sets:3, reps:"10", note:"Light-moderate weight — hinge at hips, deep hamstring stretch, flat back", muscles:["H","G"]},
-      {group:"Quad Accessory",
-       name:"Goblet Squat (DB/KB)", sets:3, reps:"15", note:"Heavy DB or KB at chest, full depth — Thursday's only direct quad work, no machine needed", muscles:["Q"]},
       {group:"Glute Isolation",
-       name:"Barbell Hip Thrust", sets:4, reps:"10", note:"Full extension, 1-sec squeeze at top, drive through heels", muscles:["G"]},
-      {name:"Cable Kickback", sets:2, reps:"15 each", note:"Ankle cuff — squeeze the glute hard at peak, no hip swing", muscles:["G"]},
+       name:"Barbell Hip Thrust", sets:5, reps:"10", note:"Full extension, 1-sec squeeze at top, drive through heels", muscles:["G"]},
+      {name:"Cable Kickback", sets:3, reps:"15 each", note:"Ankle cuff — squeeze the glute hard at peak, no hip swing", muscles:["G"]},
       {name:"Banded Lateral Walks (Monster Walk)", sets:3, reps:"20 steps each direction", note:"Mini band above knees — stay low, controlled steps, portable anywhere", muscles:["G"]},
       {name:"DB Sumo Squat Pulse", sets:3, reps:"15", note:"Wide stance, small pulses at the bottom — inner thigh/adductor burn", muscles:["G","H"]},
       {group:"Core",
@@ -410,8 +409,8 @@ const DAYS = [
       {name:"Seated Leg Curl (Machine)", sets:3, reps:"15", note:"Different angle than lying — both are needed", muscles:["H"]},
       {group:"Glute Isolation",
        name:"Barbell Hip Thrust", sets:5, reps:"12", note:"Moderate weight — squeeze focus, not just moving weight", muscles:["G"], tip:"⏱ Short on time? Drop to 4 sets here first."},
-      {name:"Single-Leg Hip Thrust (Bodyweight/DB)", sets:2, reps:"12 each", note:"Shoulders on bench, one foot planted — unilateral glute isolation, full squeeze at top", muscles:["G"]},
-      {name:"Hip Abductor (Machine)", sets:2, reps:"20", note:"Slow reps, outer glute and hip — high rep pump", muscles:["G"]},
+      {name:"Single-Leg Hip Thrust (Bodyweight/DB)", sets:3, reps:"12 each", note:"Shoulders on bench, one foot planted — unilateral glute isolation, full squeeze at top", muscles:["G"]},
+      {name:"Hip Abductor (Machine)", sets:3, reps:"20", note:"Slow reps, outer glute and hip — high rep pump", muscles:["G"]},
       {name:"Hip Adductor (Machine)", sets:3, reps:"20", note:"Inner thigh — full ROM, controlled", muscles:["G","H"]},
       {name:"Walking Lunges (DB)", sets:3, reps:"24 total", note:"Long stride, push through heel to bias glutes", muscles:["Q","G","H"]},
     ],
@@ -421,41 +420,12 @@ const DAYS = [
       equipment:"Box", intensity:"Light", duration:"~10 min"
     }
   },
-
-  // ── WEDNESDAY: Full Body — Hypertrophy Pump Day (index 5 — keeps Thu/Fri/Sat indices stable for existing logs) ──
-  {
-    day:"Wednesday", type:"Full Body", focus:"Full Body Hypertrophy — Pump Day",
-    color:"#9333ea", icon:"⚡", mainLift:null,
-    hypertrophyNote:"A lighter full-body pump day sitting between your heavy sessions — 12-15 reps, 60-90 sec rest, chase the squeeze and blood flow rather than loading up. This adds extra growth stimulus without digging into recovery from your heavier days.",
-    volSummary:[
-      {label:"Legs",color:"#60a5fa"},{label:"Chest",color:"#f87171"},{label:"Back",color:"#38bdf8"},{label:"Shoulders",color:"#facc15"},{label:"Arms",color:"#fb923c"},{label:"Core",color:"#4ade80"}
-    ],
-    accessory:[
-      {group:"Legs",
-       name:"DB Romanian Deadlift", sets:3, reps:"12", note:"Light-moderate — deep stretch, hamstring pump, not a strength effort", muscles:["H","G"]},
-      {name:"Goblet Squat (DB/KB)", sets:3, reps:"15", note:"Moderate weight, full depth, controlled tempo — quad and glute pump", muscles:["Q","G"]},
-      {group:"Chest & Back",
-       name:"Incline DB Press", sets:3, reps:"12", note:"Light-moderate, full ROM, feel the stretch at the bottom", muscles:["Ch","Sh"]},
-      {name:"Cable Seated Row", sets:3, reps:"12", note:"Full retraction, squeeze the back at peak", muscles:["Bk"]},
-      {group:"Shoulders",
-       name:"DB Lateral Raise", sets:3, reps:"15", note:"Light weight, strict form, feel the burn — not about the load", muscles:["Sh"]},
-      {group:"Arms",
-       name:"EZ-Bar Curl", sets:3, reps:"12", note:"Controlled tempo, full ROM", muscles:["Bi"]},
-      {name:"Cable Curl (Straight Bar)", sets:3, reps:"12", note:"Standing, elbows pinned to sides — constant cable tension gives a different feel than free weights", muscles:["Bi"]},
-      {name:"Cable Tricep Pushdown (Rope)", sets:3, reps:"12", note:"Full extension, squeeze at bottom", muscles:["Tr"]},
-      {group:"Core",
-       name:"Hanging Knee Raises", sets:3, reps:"15", note:"Controlled, no swinging", muscles:["C"]},
-    ],
-    conditioning:{
-      format:"10-Min Finisher", desc:"EMOM 10 min — Easy Cardio Flush",
-      workouts:["Min 1: 150m easy Row or Ski-Erg","Min 2: 10 KB Swings (light)","Repeat for 10 minutes — conversational pace, blood flow only"],
-      equipment:"Rower/Ski-Erg, KB", intensity:"Light", duration:"~10 min"
-    }
-  },
 ];
 
-// Display order for day tabs (chronological Mon–Sat), mapped to the actual DAYS[] array indices above.
-const DAY_ORDER = [0,1,5,2,3,4];
+// Display order for day tabs (chronological Mon–Thu–Fri–Sat), mapped to DAYS[] indices.
+// Wednesday was removed from the rotation but its old logged data (if any) stays
+// harmlessly in storage — it just has no day slot to display against anymore.
+const DAY_ORDER = [0,1,2,3,4];
 
 // ═══════════════════════════════════════════════════════════════
 // STATE
@@ -701,11 +671,6 @@ function selectDay(d){ currentDay=d; renderDayBtns(); renderDay(); }
 // pointer next time — instead of always resetting to Week 1 Monday. Browsing
 // around manually (selectWeek/selectDay above) never touches this pointer.
 function markDayStatus(status){
-  if(!isAtResume()){
-    const label=status==="complete"?"complete":"skipped";
-    const ok=confirm(`You're browsing ${DAYS[currentDay].day} (Week ${currentWeek}) — this isn't your current workout. Mark it ${label} anyway? Your resume point will move here.`);
-    if(!ok) return;
-  }
   const key=`w${currentWeek}_d${currentDay}`;
   state.progress.completed[key]={status, at:new Date().toISOString()};
   advanceToNextDay();
@@ -733,11 +698,11 @@ function jumpToCurrent(){
   currentWeek=state.progress.week; currentDay=state.progress.day;
   renderWeekBtns(); renderWeekInfo(); renderDayBtns(); renderDay();
 }
-function isAtResume(){ return currentWeek===state.progress.week && currentDay===state.progress.day; }
 function renderResumeBanner(){
   const el=document.getElementById("resume-banner");
   if(!el) return;
-  el.innerHTML=isAtResume()?"":`<div onclick="jumpToCurrent()" style="cursor:pointer;margin-bottom:12px;padding:8px 14px;background:#0a1a2a;border:1px solid #1d6fa466;border-radius:8px;font-size:12px;color:#4da6ff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
+  const atResume=currentWeek===state.progress.week && currentDay===state.progress.day;
+  el.innerHTML=atResume?"":`<div onclick="jumpToCurrent()" style="cursor:pointer;margin-bottom:12px;padding:8px 14px;background:#0a1a2a;border:1px solid #1d6fa466;border-radius:8px;font-size:12px;color:#4da6ff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
     <span>👀 Browsing — tap to jump back to your current workout</span><span>→</span>
   </div>`;
 }
@@ -1265,11 +1230,11 @@ function restoreBackup(){
       state.notes=p.notes||{};
       state.bodyweight=p.bodyweight||{};
       state.progress=p.progress||{week:1,day:0,completed:{}};
-      if(!state.progress.completed) state.progress.completed={};
       migrateLegacyLogs();
       saveState();
       currentWeek=state.progress.week||1;
       currentDay=state.progress.day||0;
+      if(!DAY_ORDER.includes(currentDay)){ currentDay=DAY_ORDER[0]; state.progress.day=currentDay; }
       toast("✓ Data restored!"); hideImport(); renderBackupSummary();
       // Force every view that reads from state to redraw immediately —
       // otherwise the Program/Calculator tabs keep showing stale content.
@@ -1289,6 +1254,7 @@ function restoreBackup(){
 loadState();
 currentWeek=state.progress.week||1;
 currentDay=state.progress.day||0;
+if(!DAY_ORDER.includes(currentDay)){ currentDay=DAY_ORDER[0]; state.progress.day=currentDay; saveState(); }
 populateLiftSelects();
 renderWeekBtns();
 renderWeekInfo();
