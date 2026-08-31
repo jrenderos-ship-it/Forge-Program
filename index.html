@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#e85d04">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
-<title>FORGE — 10-Week Program</title>
+<title>FORGE — 17-Week Program</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { font-family: -apple-system, 'Inter', 'Helvetica Neue', sans-serif; background: #0f0f0f; color: #f0f0f0; min-height: 100vh; }
@@ -84,7 +84,7 @@
     <div>
       <div style="display:flex;align-items:baseline;gap:10px;">
         <span class="logo">FORGE</span>
-        <span class="logo-sub">10-Week Program</span>
+        <span class="logo-sub">17-Week Program</span>
       </div>
       <div class="subtitle">Strength · Hypertrophy · Leg Growth — Wave Loading</div>
     </div>
@@ -152,7 +152,7 @@
 
   <!-- PROGRESS TAB -->
   <div id="tab-progress" class="hidden">
-    <h3 style="color:#fff;font-size:18px;font-weight:800;margin-bottom:4px;">10-Week Loading Plan</h3>
+    <h3 style="color:#fff;font-size:18px;font-weight:800;margin-bottom:4px;">17-Week Loading Plan</h3>
     <p style="color:#888;font-size:13px;margin-bottom:16px;">Projected working weights based on your saved 1RMs.</p>
     <div id="progress-content"></div>
   </div>
@@ -227,6 +227,17 @@
       </div>
     </div>
     <div id="current-data-summary" class="card" style="border:1px solid #222;"></div>
+
+    <div class="card" style="border:1px solid #ff444466;margin-top:16px;">
+      <div style="font-size:14px;font-weight:800;color:#ff8c42;margin-bottom:4px;">⚠️ Reset Program Progress</div>
+      <p style="font-size:12px;color:#888;margin-bottom:12px;line-height:1.6;">
+        Jumps you back to <strong style="color:#fff;">Week 1, Day 1</strong> and clears your Mark Complete/Skip history —
+        for starting a new training block. Your 1RMs, logged weights, notes, and bodyweight history are
+        <strong style="color:#fff;">NOT deleted</strong> — progression suggestions will still reference your past
+        performance where relevant.
+      </p>
+      <button onclick="resetProgramProgress()" style="width:100%;padding:11px;background:#3a1a0a;border:1px solid #ff8c42;border-radius:8px;color:#ff8c42;font-size:14px;font-weight:700;cursor:pointer;">Reset to Week 1, Day 1</button>
+    </div>
   </div>
 
 </div>
@@ -237,17 +248,29 @@
 // ═══════════════════════════════════════════════════════════════
 const MAIN_LIFTS = ["Back Squat","Deadlift","Bench Press","Overhead Press","Front Squat"];
 
+// 17-week block (Sept 1 – Dec 31). First half keeps standard 3-build/1-deload
+// mesocycles while you're fresh; the back half shortens to 2-build/1-deload —
+// fatigue compounds over a long block, so recovery weeks come more often as
+// the program goes on, not on a flat, unchanging cadence. Still 5 total light
+// weeks (4, 8, 11, 14, 17) — just better spaced for a realistic long-haul block.
 const WAVES = [
   {week:1,label:"Week 1 — Foundation",sets:4,reps:"8",pct:0.65,deload:false,test:false},
-  {week:2,label:"Week 2 — Build",sets:4,reps:"6",pct:0.72,deload:false,test:false},
-  {week:3,label:"Week 3 — Overload",sets:5,reps:"5",pct:0.78,deload:false,test:false},
+  {week:2,label:"Week 2 — Build",sets:4,reps:"7",pct:0.70,deload:false,test:false},
+  {week:3,label:"Week 3 — Overload",sets:5,reps:"6",pct:0.75,deload:false,test:false},
   {week:4,label:"Week 4 — Deload",sets:3,reps:"5",pct:0.60,deload:true,test:false},
-  {week:5,label:"Week 5 — Reload",sets:4,reps:"6",pct:0.75,deload:false,test:false},
-  {week:6,label:"Week 6 — Build",sets:4,reps:"5",pct:0.80,deload:false,test:false},
-  {week:7,label:"Week 7 — Overload",sets:5,reps:"4",pct:0.85,deload:false,test:false},
-  {week:8,label:"Week 8 — Deload",sets:3,reps:"4",pct:0.65,deload:true,test:false},
-  {week:9,label:"Week 9 — Peak",sets:4,reps:"3",pct:0.88,deload:false,test:false},
-  {week:10,label:"Week 10 — Test & Deload",sets:1,reps:"1",pct:1.00,deload:true,test:true},
+  {week:5,label:"Week 5 — Reload",sets:4,reps:"6",pct:0.70,deload:false,test:false},
+  {week:6,label:"Week 6 — Build",sets:4,reps:"5",pct:0.75,deload:false,test:false},
+  {week:7,label:"Week 7 — Overload",sets:5,reps:"4",pct:0.80,deload:false,test:false},
+  {week:8,label:"Week 8 — Deload",sets:3,reps:"5",pct:0.62,deload:true,test:false},
+  {week:9,label:"Week 9 — Reload",sets:4,reps:"5",pct:0.75,deload:false,test:false},
+  {week:10,label:"Week 10 — Overload",sets:5,reps:"4",pct:0.82,deload:false,test:false},
+  {week:11,label:"Week 11 — Deload",sets:3,reps:"4",pct:0.65,deload:true,test:false},
+  {week:12,label:"Week 12 — Reload",sets:4,reps:"4",pct:0.78,deload:false,test:false},
+  {week:13,label:"Week 13 — Overload",sets:5,reps:"3",pct:0.85,deload:false,test:false},
+  {week:14,label:"Week 14 — Deload",sets:3,reps:"4",pct:0.68,deload:true,test:false},
+  {week:15,label:"Week 15 — Build",sets:4,reps:"3",pct:0.83,deload:false,test:false},
+  {week:16,label:"Week 16 — Peak",sets:3,reps:"2",pct:0.90,deload:true,test:false},
+  {week:17,label:"Week 17 — Test & Deload",sets:1,reps:"1",pct:1.00,deload:true,test:true},
 ];
 
 const MT = {
@@ -267,7 +290,7 @@ const DAYS = [
 
   // ── MONDAY: Lower Body — Squat / Quad ──────────────────────
   {
-    day:"Monday", type:"Lower Body", focus:"Quad-Dominant Strength",
+    day:"Day 2", type:"Lower Body", focus:"Quad-Dominant Strength",
     color:"#e85d04", icon:"🦵", mainLift:"Back Squat",
     volSummary:[
       {label:"Quads",color:"#60a5fa"},{label:"Glutes",color:"#f472b6"},{label:"Core",color:"#4ade80"}
@@ -296,7 +319,7 @@ const DAYS = [
 
   // ── TUESDAY: Upper Body — Press + Chest + Triceps ──────────
   {
-    day:"Tuesday", type:"Upper Body", focus:"Chest · Shoulders · Triceps — Hypertrophy",
+    day:"Day 1", type:"Upper Body", focus:"Chest · Shoulders · Triceps — Hypertrophy",
     color:"#2b9348", icon:"💪", mainLift:"Bench Press",
     hypertrophyNote:"All upper body work is 8–15 reps with 60–90 sec rest. Focus on the muscle, not the weight. Slow eccentrics (3 sec down), full ROM, feel every rep.",
     volSummary:[
@@ -329,7 +352,7 @@ const DAYS = [
 
   // ── THURSDAY: Lower Body — Hinge / Hamstring / Glute ───────
   {
-    day:"Thursday", type:"Lower Body", focus:"Hamstring & Glute Dominant",
+    day:"Day 4", type:"Lower Body", focus:"Hamstring & Glute Dominant",
     color:"#7b2d8b", icon:"🔩", mainLift:"Deadlift",
     volSummary:[
       {label:"Hamstrings",color:"#c084fc"},{label:"Glutes",color:"#f472b6"},{label:"Core",color:"#4ade80"}
@@ -359,7 +382,7 @@ const DAYS = [
 
   // ── FRIDAY: Upper Body — Back + Biceps ─────────────────────
   {
-    day:"Friday", type:"Upper Body", focus:"Back · Biceps · Rear Delts — Hypertrophy",
+    day:"Day 3", type:"Upper Body", focus:"Back · Biceps · Rear Delts — Hypertrophy",
     color:"#1d6fa4", icon:"🏋️", mainLift:"Overhead Press",
     hypertrophyNote:"All upper body work is 8–15 reps with 60–90 sec rest. Focus on the mind-muscle connection — feel the back and biceps doing the work on every pull. Slow eccentrics, full ROM.",
     volSummary:[
@@ -372,7 +395,8 @@ const DAYS = [
       {name:"Cable Seated Row", sets:4, reps:"12", note:"Full stretch forward, full retraction — feel both ends of the ROM", muscles:["Bk"]},
       {name:"DB Single-Arm Row (Braced)", sets:3, reps:"12 each", note:"Brace on bench — heavy, pull elbow to ceiling", muscles:["Bk"]},
       {group:"Back Width & Rear Delts",
-       name:"Cable Face Pull", sets:4, reps:"15", note:"Elbows high, external rotation at peak — shoulder health priority", muscles:["Sh","Bk"]},
+       name:"Lat Pulldown (Cable/Machine)", sets:4, reps:"10-12", note:"Wide grip, drive elbows down and back, full stretch at top — the vertical pull your rows alone can't replicate for lat width", muscles:["Bk"]},
+      {name:"Cable Face Pull", sets:4, reps:"15", note:"Elbows high, external rotation at peak — shoulder health priority", muscles:["Sh","Bk"]},
       {name:"DB Rear Delt Fly", sets:3, reps:"15", note:"Bend 45° forward, arms arc back — slow and controlled", muscles:["Sh","Bk"]},
       {name:"KB Farmer's Carry", sets:4, reps:"40m", note:"Heavy — stand tall, grip and trap focus", muscles:["Bk"]},
       {group:"Biceps",
@@ -391,7 +415,7 @@ const DAYS = [
 
   // ── SATURDAY: Lower Body — Pure Hypertrophy ────────────────
   {
-    day:"Saturday", type:"Lower Body", focus:"Pure Hypertrophy — Quads · Hamstrings · Glutes",
+    day:"Day 5", type:"Lower Body", focus:"Pure Hypertrophy — Quads · Hamstrings · Glutes",
     color:"#c9184a", icon:"🔥", mainLift:"Back Squat",
     mainLiftNote:"Speed & volume focus @ 65% — bar speed, perfect form, no grinding",
     volSummary:[
@@ -400,16 +424,13 @@ const DAYS = [
     accessory:[
       {group:"Quad Hypertrophy",
        name:"Hack Squat (Machine)", sets:5, reps:"10-12", note:"Full depth, 3-sec eccentric, no lockout = constant tension", muscles:["Q","G"], tip:"⏱ Short on time? Drop to 4 sets here first."},
-      {name:"Heels-Elevated DB Squat", sets:4, reps:"15", note:"Plates or wedge under heels — upright torso, maximizes quad stretch and burn", muscles:["Q"]},
       {name:"Bulgarian Split Squat (DB)", sets:4, reps:"10 each", note:"Heavy DBs — front foot forward, knee tracks over toe", muscles:["Q","G"]},
       {name:"Leg Extension (Machine)", sets:4, reps:"15-20", note:"Drop set on last set — slow eccentric, squeeze at top", muscles:["Q"]},
       {group:"Hamstring Hypertrophy",
-       name:"Romanian Deadlift (DB)", sets:4, reps:"12", note:"Deep stretch — feel every rep in the hamstrings", muscles:["H","G"]},
-      {name:"Lying Leg Curl (Machine)", sets:4, reps:"12-15", note:"Full ROM, 2-sec hold at peak, slow return", muscles:["H"]},
+       name:"Lying Leg Curl (Machine)", sets:4, reps:"12-15", note:"Full ROM, 2-sec hold at peak, slow return", muscles:["H"]},
       {name:"Seated Leg Curl (Machine)", sets:3, reps:"15", note:"Different angle than lying — both are needed", muscles:["H"]},
       {group:"Glute Isolation",
        name:"Barbell Hip Thrust", sets:5, reps:"12", note:"Moderate weight — squeeze focus, not just moving weight", muscles:["G"], tip:"⏱ Short on time? Drop to 4 sets here first."},
-      {name:"Single-Leg Hip Thrust (Bodyweight/DB)", sets:3, reps:"12 each", note:"Shoulders on bench, one foot planted — unilateral glute isolation, full squeeze at top", muscles:["G"]},
       {name:"Hip Abductor (Machine)", sets:3, reps:"20", note:"Slow reps, outer glute and hip — high rep pump", muscles:["G"]},
       {name:"Hip Adductor (Machine)", sets:3, reps:"20", note:"Inner thigh — full ROM, controlled", muscles:["G","H"]},
       {name:"Walking Lunges (DB)", sets:3, reps:"24 total", note:"Long stride, push through heel to bias glutes", muscles:["Q","G","H"]},
@@ -422,10 +443,11 @@ const DAYS = [
   },
 ];
 
-// Display order for day tabs (chronological Mon–Thu–Fri–Sat), mapped to DAYS[] indices.
-// Wednesday was removed from the rotation but its old logged data (if any) stays
-// harmlessly in storage — it just has no day slot to display against anymore.
-const DAY_ORDER = [0,1,2,3,4];
+// Display order for the day tabs (Day 1 through Day 5), mapped to DAYS[] indices.
+// Index positions are unchanged from before — only the "day" label on each object
+// was swapped (index0 is labeled Day 2, index1 is Day 1, etc.) — so all previously
+// logged data stays correctly matched to its exercises.
+const DAY_ORDER = [1,0,3,2,4];
 
 // ═══════════════════════════════════════════════════════════════
 // STATE
@@ -470,7 +492,7 @@ function migrateLegacyLogs(){
     }
   });
   // Pass 2: walk every exercise that currently exists and check the old \s-only key format too
-  for(let w=1; w<=10; w++){
+  for(let w=1; w<=WAVES.length; w++){
     DAYS.forEach((day,d)=>{
       const names=[];
       if(day.mainLift) names.push(`Main_${day.mainLift}`);
@@ -650,10 +672,14 @@ function renderWeekBtns(){
 }
 function renderWeekInfo(){
   const w=WAVES[currentWeek-1];
+  const holidayNote=currentWeek>=11
+    ?`<div style="margin-top:8px;font-size:12px;color:#facc15;line-height:1.6;">🦃🎄 This stretch of the program (roughly Weeks 11-17) runs through Thanksgiving, Christmas, and New Year's. If this specific real-world week lands on a holiday or travel, it's completely fine to treat it as a bonus deload — just use a nearby deload week's numbers instead — rather than forcing the table.</div>`
+    :"";
   document.getElementById("week-info").innerHTML=`
     <span style="font-size:14px;font-weight:700;color:#fff;">${w.label}</span>
     <span style="font-size:12px;color:#888;margin-left:10px;">${w.test?"Max out — retest your 1RMs":`Main lifts: ${w.sets}×${w.reps} @ ${Math.round(w.pct*100)}% 1RM`}</span>
     ${w.deload?`<span class="badge" style="background:#1a3a1a;color:#4ade80;margin-left:8px;">${w.test?"TEST":"DELOAD"}</span>`:""}
+    ${holidayNote}
   `;
 }
 function renderDayBtns(){
@@ -668,7 +694,7 @@ function selectDay(d){ currentDay=d; renderDayBtns(); renderDay(); }
 // ── Day completion & auto-resume ──────────────────────────────────────────────
 // Marking a day complete/skipped advances the "resume pointer" (state.progress)
 // to the next day in chronological order, and the app opens straight to that
-// pointer next time — instead of always resetting to Week 1 Monday. Browsing
+// pointer next time — instead of always resetting to Week 1 Day 1. Browsing
 // around manually (selectWeek/selectDay above) never touches this pointer.
 function markDayStatus(status){
   const key=`w${currentWeek}_d${currentDay}`;
@@ -686,7 +712,7 @@ function advanceToNextDay(){
     currentDay=DAY_ORDER[pos+1];
   } else {
     currentDay=DAY_ORDER[0];
-    if(currentWeek<10){ currentWeek+=1; }
+    if(currentWeek<WAVES.length){ currentWeek+=1; }
     else { toast("🎉 10-week program complete! Great work.","#4ade80"); }
   }
   state.progress.week=currentWeek;
@@ -697,6 +723,15 @@ function advanceToNextDay(){
 function jumpToCurrent(){
   currentWeek=state.progress.week; currentDay=state.progress.day;
   renderWeekBtns(); renderWeekInfo(); renderDayBtns(); renderDay();
+}
+function resetProgramProgress(){
+  if(!confirm("Reset to Week 1, Day 1? This clears your Mark Complete/Skip history but keeps all your 1RMs, logged weights, notes, and bodyweight data. Continue?")) return;
+  state.progress={week:1, day:DAY_ORDER[0], completed:{}};
+  saveState();
+  currentWeek=1; currentDay=DAY_ORDER[0];
+  toast("✓ Reset to Week 1, Day 1 — your logged data is still here");
+  renderWeekBtns(); renderWeekInfo(); renderDayBtns(); renderDay();
+  setTimeout(()=>showTab("program"),600);
 }
 function renderResumeBanner(){
   const el=document.getElementById("resume-banner");
@@ -1049,9 +1084,9 @@ function renderSavedORMs(){
 // ═══════════════════════════════════════════════════════════════
 // Maps each main lift to where its real logged performance lives, so the Progress
 // tab can show "Actual" next to "Target". Front Squat has no dedicated main-lift day
-// (it's an accessory item tied to its own 1RM), so it reads straight from Monday's
-// accessory log instead of a "Main_" key. Back Squat trains on both Monday (heavy,
-// wave-loaded) and Saturday (lighter/speed) — Monday is the true progression signal.
+// (it's an accessory item tied to its own 1RM), so it reads straight from Day 2's
+// accessory log instead of a "Main_" key. Back Squat trains on both Day 2 (heavy,
+// wave-loaded) and Day 5 (lighter/speed) — Day 2 is the true progression signal.
 const MAIN_LIFT_SOURCE = {
   "Back Squat":      {dayIdx:0, keyName:"Main_Back Squat"},
   "Deadlift":        {dayIdx:2, keyName:"Main_Deadlift"},
