@@ -288,25 +288,19 @@ function mtag(k){ const m=MT[k]; return `<span class="muscle-tag" style="backgro
 
 const DAYS = [
 
-  // ── MONDAY: Lower Body — Squat / Quad ──────────────────────
+  // ── DAY 1: Lower Body — Quad-Dominant ──────────────────────
   {
-    day:"Day 2", type:"Lower Body", focus:"Quad-Dominant Strength",
+    day:"Day 1", type:"Lower Body", focus:"Quad-Dominant Strength",
     color:"#e85d04", icon:"🦵", mainLift:"Back Squat",
     volSummary:[
       {label:"Quads",color:"#60a5fa"},{label:"Glutes",color:"#f472b6"},{label:"Core",color:"#4ade80"}
     ],
     accessory:[
-      {group:"Quad Strength",
-       name:"Front Squat", sets:4, reps:"5", note:"65% of Front Squat 1RM — upright torso, elbows high", liftKey:"Front Squat", pct:0.65, muscles:["Q"]},
+      {name:"Front Squat", sets:4, reps:"5", note:"65% of Front Squat 1RM — upright torso, elbows high", liftKey:"Front Squat", pct:0.65, muscles:["Q"]},
       {name:"DB/KB Goblet Squat", sets:4, reps:"12", note:"Heavy DB or KB held at chest, full depth, elbows inside knees at bottom", muscles:["Q","G"]},
-      {name:"KB Front-Rack Walking Lunges", sets:3, reps:"20 total", note:"Rack KB(s) at chest, controlled steps, upright torso — heavy quad/glute demand", muscles:["Q","G"]},
       {name:"Leg Extension (Machine)", sets:4, reps:"15", note:"Full ROM, squeeze hard at top, slow eccentric", muscles:["Q"]},
-      {group:"Glute Accessory",
-       name:"Barbell Hip Thrust", sets:4, reps:"12", note:"1-sec pause at top, drive through heels", muscles:["G"]},
-      {name:"KB Single-Leg RDL", sets:3, reps:"10 each", note:"Deep hinge, feel the hamstring stretch, control the descent", muscles:["H","G"]},
-      {group:"Core",
-       name:"Hanging Knee Raises", sets:3, reps:"15", note:"No swinging, pause at top", muscles:["C"]},
-      {name:"Ab Wheel Rollout", sets:3, reps:"10", note:"Full extension, brace hard", muscles:["C"]},
+      {name:"Barbell Hip Thrust", sets:4, reps:"12", note:"1-sec pause at top, drive through heels", muscles:["G"]},
+      {name:"Hanging Knee Raises", sets:3, reps:"15", note:"No swinging, pause at top", muscles:["C"]},
     ],
     conditioning:{
       format:"10-Min Finisher", desc:"EMOM 10 min — Low Impact",
@@ -315,27 +309,19 @@ const DAYS = [
     }
   },
 
-  // ── TUESDAY: Upper Body — Press + Chest + Triceps ──────────
+  // ── DAY 2: Upper Body — Chest / Shoulders / Triceps ────────
   {
-    day:"Day 1", type:"Upper Body", focus:"Chest · Shoulders · Triceps — Hypertrophy",
+    day:"Day 2", type:"Upper Body", focus:"Chest · Shoulders · Triceps — Hypertrophy",
     color:"#2b9348", icon:"💪", mainLift:"Bench Press",
-    hypertrophyNote:"All upper body work is 8–15 reps with 60–90 sec rest. Focus on the muscle, not the weight. Slow eccentrics (3 sec down), full ROM, feel every rep.",
+    hypertrophyNote:"8–15 reps, 60–90 sec rest. Focus on the muscle, not the weight. Slow eccentrics (3 sec down), full ROM, feel every rep.",
     volSummary:[
-      {label:"Chest",color:"#f87171"},{label:"Shoulders",color:"#facc15"},{label:"Triceps",color:"#2dd4bf"},{label:"Core",color:"#4ade80"}
+      {label:"Chest",color:"#f87171"},{label:"Shoulders",color:"#facc15"},{label:"Triceps",color:"#2dd4bf"}
     ],
     accessory:[
-      {group:"Chest",
-       name:"DB Incline Press", sets:4, reps:"10-12", note:"3-sec eccentric — full stretch at bottom, drive up explosively", muscles:["Ch","Sh"]},
-      {name:"DB Flat Press", sets:4, reps:"10-12", note:"Elbows at 45°, touch chest, full lockout", muscles:["Ch","Tr"]},
-      {name:"Cable Chest Fly (Low-to-High)", sets:3, reps:"15", note:"Arms slightly bent, squeeze at peak — pure chest isolation", muscles:["Ch"]},
-      {group:"Shoulders",
-       name:"Overhead Press (Barbell)", sets:3, reps:"8", note:"70% of OHP 1RM — strict press, control the descent", liftKey:"Overhead Press", pct:0.70, muscles:["Sh","Tr"]},
+      {name:"DB Incline Press", sets:4, reps:"10-12", note:"3-sec eccentric — full stretch at bottom, drive up explosively", muscles:["Ch","Sh"]},
+      {name:"Overhead Press (Barbell)", sets:3, reps:"8", note:"70% of OHP 1RM — strict press, control the descent", liftKey:"Overhead Press", pct:0.70, muscles:["Sh","Tr"]},
       {name:"DB Lateral Raises", sets:4, reps:"15", note:"Lead with elbow, slight lean forward, pause at top", muscles:["Sh"]},
-      {group:"Triceps",
-       name:"Cable Tricep Pushdown (Rope)", sets:4, reps:"12", note:"Split rope at bottom, full extension, elbows pinned to sides", muscles:["Tr"]},
-      {group:"Core",
-       name:"Cable Crunch", sets:3, reps:"15", note:"Round through the spine, slow eccentric", muscles:["C"]},
-      {name:"Russian Twists (KB)", sets:3, reps:"20 total", note:"Feet elevated, controlled rotation each side", muscles:["C"]},
+      {name:"Cable Tricep Pushdown (Rope)", sets:4, reps:"12", note:"Split rope at bottom, full extension, elbows pinned to sides", muscles:["Tr"]},
     ],
     conditioning:{
       format:"12-Min Finisher", desc:"AMRAP 12 min — Upper Body Pump",
@@ -344,23 +330,19 @@ const DAYS = [
     }
   },
 
-  // ── THURSDAY: Lower Body — Hinge / Hamstring / Glute ───────
+  // ── DAY 3: Lower Body — Hamstring / Glute ──────────────────
   {
-    day:"Day 4", type:"Lower Body", focus:"Hamstring & Glute Dominant",
+    day:"Day 3", type:"Lower Body", focus:"Hamstring & Glute Dominant",
     color:"#7b2d8b", icon:"🔩", mainLift:"Deadlift",
     volSummary:[
       {label:"Hamstrings",color:"#c084fc"},{label:"Glutes",color:"#f472b6"},{label:"Core",color:"#4ade80"}
     ],
     accessory:[
-      {group:"Hamstring Strength",
-       name:"Romanian Deadlift (Barbell)", sets:4, reps:"8", note:"65% of Deadlift 1RM — push hips back, deep stretch", liftKey:"Deadlift", pct:0.65, muscles:["H","G"]},
-      {name:"Barbell Good Morning", sets:3, reps:"10", note:"Light-moderate weight — hinge at hips, deep hamstring stretch, flat back", muscles:["H","G"]},
-      {group:"Glute Isolation",
-       name:"Barbell Hip Thrust", sets:5, reps:"10", note:"Full extension, 1-sec squeeze at top, drive through heels", muscles:["G"]},
+      {name:"Romanian Deadlift (Barbell)", sets:4, reps:"8", note:"65% of Deadlift 1RM — push hips back, deep stretch", liftKey:"Deadlift", pct:0.65, muscles:["H","G"]},
+      {name:"Lying Leg Curl (Machine)", sets:4, reps:"12-15", note:"Full ROM, 2-sec hold at peak, slow return", muscles:["H"]},
+      {name:"Barbell Hip Thrust", sets:5, reps:"10", note:"Full extension, 1-sec squeeze at top, drive through heels", muscles:["G"]},
       {name:"DB Sumo Squat Pulse", sets:3, reps:"15", note:"Wide stance, small pulses at the bottom — inner thigh/adductor burn", muscles:["G","H"]},
-      {group:"Core",
-       name:"Pallof Press (Cable)", sets:3, reps:"12 each side", note:"Anti-rotation — resist the cable, stand tall", muscles:["C"]},
-      {name:"Weighted Sit-Ups", sets:3, reps:"15", note:"Hold plate at chest, full ROM", muscles:["C"]},
+      {name:"Pallof Press (Cable)", sets:3, reps:"12 each side", note:"Anti-rotation — resist the cable, stand tall", muscles:["C"]},
     ],
     conditioning:{
       format:"10-Min Finisher", desc:"EMOM 10 min — Glute & Posterior Chain",
@@ -369,27 +351,19 @@ const DAYS = [
     }
   },
 
-  // ── FRIDAY: Upper Body — Back + Biceps ─────────────────────
+  // ── DAY 4: Upper Body — Back / Biceps / Rear Delts ─────────
   {
-    day:"Day 3", type:"Upper Body", focus:"Back · Biceps · Rear Delts — Hypertrophy",
+    day:"Day 4", type:"Upper Body", focus:"Back · Biceps · Rear Delts — Hypertrophy",
     color:"#1d6fa4", icon:"🏋️", mainLift:"Overhead Press",
-    hypertrophyNote:"All upper body work is 8–15 reps with 60–90 sec rest. Focus on the mind-muscle connection — feel the back and biceps doing the work on every pull. Slow eccentrics, full ROM.",
+    hypertrophyNote:"8–15 reps, 60–90 sec rest. Focus on the mind-muscle connection — feel the back and biceps doing the work on every pull. Slow eccentrics, full ROM.",
     volSummary:[
       {label:"Back",color:"#38bdf8"},{label:"Biceps",color:"#fb923c"},{label:"Shoulders",color:"#facc15"}
     ],
     accessory:[
-      {group:"Back Thickness",
-       name:"Bench Press (Supplemental)", sets:3, reps:"8", note:"70% of Bench 1RM — controlled, bar speed focus", liftKey:"Bench Press", pct:0.70, muscles:["Ch","Tr"]},
-      {name:"DB Bent-Over Row", sets:4, reps:"10-12", note:"Each arm — full ROM, elbow to hip, 1-sec hold at top", muscles:["Bk"]},
       {name:"Cable Seated Row", sets:4, reps:"12", note:"Full stretch forward, full retraction — feel both ends of the ROM", muscles:["Bk"]},
-      {group:"Back Width & Rear Delts",
-       name:"Lat Pulldown (Cable/Machine)", sets:4, reps:"10-12", note:"Wide grip, drive elbows down and back, full stretch at top — the vertical pull your rows alone can't replicate for lat width", muscles:["Bk"]},
+      {name:"Lat Pulldown (Cable/Machine)", sets:4, reps:"10-12", note:"Wide grip, drive elbows down and back, full stretch at top — the vertical pull your rows alone can't replicate for lat width", muscles:["Bk"]},
       {name:"Cable Face Pull", sets:4, reps:"15", note:"Elbows high, external rotation at peak — shoulder health priority", muscles:["Sh","Bk"]},
-      {name:"KB Farmer's Carry", sets:4, reps:"40m", note:"Heavy — stand tall, grip and trap focus", muscles:["Bk"]},
-      {group:"Biceps",
-       name:"Barbell Curl", sets:4, reps:"10", note:"Full ROM, no swinging, 3-sec eccentric — supinate at top", muscles:["Bi"]},
-      {name:"Incline DB Curl", sets:3, reps:"12", note:"Bench at 45° — maximize the stretch at the bottom", muscles:["Bi"]},
-      {name:"Cable Hammer Curl (Rope)", sets:3, reps:"12", note:"Neutral grip — brachialis and brachioradialis focus", muscles:["Bi"]},
+      {name:"Barbell Curl", sets:4, reps:"10", note:"Full ROM, no swinging, 3-sec eccentric — supinate at top", muscles:["Bi"]},
     ],
     conditioning:{
       format:"12-Min Finisher", desc:"AMRAP 12 min — Low Intensity",
@@ -398,7 +372,7 @@ const DAYS = [
     }
   },
 
-  // ── SATURDAY: Lower Body — Pure Hypertrophy ────────────────
+  // ── DAY 5: Lower Body — Pure Hypertrophy (all 3) ───────────
   {
     day:"Day 5", type:"Lower Body", focus:"Pure Hypertrophy — Quads · Hamstrings · Glutes",
     color:"#c9184a", icon:"🔥", mainLift:"Back Squat",
@@ -407,17 +381,10 @@ const DAYS = [
       {label:"Quads",color:"#60a5fa"},{label:"Hamstrings",color:"#c084fc"},{label:"Glutes",color:"#f472b6"}
     ],
     accessory:[
-      {group:"Quad Hypertrophy",
-       name:"Hack Squat (Machine)", sets:5, reps:"10-12", note:"Full depth, 3-sec eccentric, no lockout = constant tension", muscles:["Q","G"], tip:"⏱ Short on time? Drop to 4 sets here first."},
+      {name:"Hack Squat (Machine)", sets:5, reps:"10-12", note:"Full depth, 3-sec eccentric, no lockout = constant tension", muscles:["Q","G"], tip:"⏱ Short on time? Drop to 4 sets here first."},
       {name:"Bulgarian Split Squat (DB)", sets:4, reps:"10 each", note:"Heavy DBs — front foot forward, knee tracks over toe", muscles:["Q","G"]},
-      {name:"Leg Extension (Machine)", sets:4, reps:"15-20", note:"Drop set on last set — slow eccentric, squeeze at top", muscles:["Q"]},
-      {group:"Hamstring Hypertrophy",
-       name:"Lying Leg Curl (Machine)", sets:4, reps:"12-15", note:"Full ROM, 2-sec hold at peak, slow return", muscles:["H"]},
-      {name:"Seated Leg Curl (Machine)", sets:3, reps:"15", note:"Different angle than lying — both are needed", muscles:["H"]},
-      {group:"Glute Isolation",
-       name:"Barbell Hip Thrust", sets:5, reps:"12", note:"Moderate weight — squeeze focus, not just moving weight", muscles:["G"], tip:"⏱ Short on time? Drop to 4 sets here first."},
-      {name:"Hip Abductor (Machine)", sets:3, reps:"20", note:"Slow reps, outer glute and hip — high rep pump", muscles:["G"]},
-      {name:"Hip Adductor (Machine)", sets:3, reps:"20", note:"Inner thigh — full ROM, controlled", muscles:["G","H"]},
+      {name:"Lying Leg Curl (Machine)", sets:4, reps:"12-15", note:"Full ROM, 2-sec hold at peak, slow return", muscles:["H"]},
+      {name:"Barbell Hip Thrust", sets:5, reps:"12", note:"Moderate weight — squeeze focus, not just moving weight", muscles:["G"], tip:"⏱ Short on time? Drop to 4 sets here first."},
       {name:"Walking Lunges (DB)", sets:3, reps:"24 total", note:"Long stride, push through heel to bias glutes", muscles:["Q","G","H"]},
     ],
     conditioning:{
@@ -428,11 +395,11 @@ const DAYS = [
   },
 ];
 
-// Display order for the day tabs (Day 1 through Day 5), mapped to DAYS[] indices.
-// Index positions are unchanged from before — only the "day" label on each object
-// was swapped (index0 is labeled Day 2, index1 is Day 1, etc.) — so all previously
-// logged data stays correctly matched to its exercises.
-const DAY_ORDER = [1,0,3,2,4];
+// Straight index order — Day 1 through Day 5, no remapping. This is an intentional
+// program rebuild (all-new movement lists), so there's no legacy index mapping to
+// preserve this time; any old logged data under the previous structure's exercise
+// names simply won't have a matching slot anymore, same as any prior exercise swap.
+const DAY_ORDER = [0,1,2,3,4];
 
 // ═══════════════════════════════════════════════════════════════
 // STATE
@@ -549,6 +516,45 @@ function getBaselineFromSets(exName,dayIdx,uptoWeek){
     if(state.logs[key]) return {week:w, weight:parseFloat(state.logs[key]), avgRPE:null};
   }
   return null;
+}
+// Shared by main lifts AND any accessory movement tied to its own 1RM (liftKey).
+// Both have a "planned" target (from wave% or a fixed %) that gets nudged up/down
+// based on last session's average RPE — same logic, same increment scale, so a
+// Front Squat or supplemental OHP set gets exactly the same real week-to-week
+// adjustment a main lift does, instead of just repeating a flat percentage forever.
+function computePlannedSuggestion(baseline, planned, incrementAmt){
+  if(!baseline) return null;
+  let adjusted=planned, note, noteColor="#888";
+  if(baseline.avgRPE!=null){
+    if(baseline.avgRPE<=6.5){ adjusted=planned+incrementAmt; note=`Last time felt easy (RPE ${baseline.avgRPE.toFixed(1)}) — nudged +${incrementAmt} lbs above plan`; noteColor="#4ade80"; }
+    else if(baseline.avgRPE>=9){ adjusted=planned-incrementAmt; note=`Last time was a grind (RPE ${baseline.avgRPE.toFixed(1)}) — nudged -${incrementAmt} lbs below plan. OK to stick with the planned weight instead.`; noteColor="#ff8c42"; }
+    else { note=`Last time RPE ${baseline.avgRPE.toFixed(1)} — right on target, sticking with the plan`; noteColor="#888"; }
+  } else {
+    note=`Last logged: ${baseline.weight} lbs (Wk ${baseline.week}) — no RPE recorded, so no adjustment applied`;
+  }
+  return {adjusted, note, noteColor};
+}
+// Renders the "Planned / This Week's Suggestion" card. Used for main lifts AND any
+// accessory movement tied to its own 1RM — same visual pattern, same math, everywhere.
+function renderPlannedSuggestionBlock(planned, refLabel, refValue, color, baseline, incrementAmt){
+  const s=computePlannedSuggestion(baseline, planned, incrementAmt);
+  let suggestBlock;
+  if(s){
+    suggestBlock=`<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid #222;">
+      <span style="font-size:13px;color:${color};font-weight:700;">This Week's Suggestion</span>
+      <span style="font-size:24px;font-weight:900;color:${color};">${s.adjusted} lbs</span>
+    </div>
+    <div style="font-size:11px;color:${s.noteColor};margin-top:4px;">${s.note}</div>`;
+  } else {
+    suggestBlock=`<div style="font-size:11px;color:#555;margin-top:8px;padding-top:8px;border-top:1px solid #222;font-style:italic;">📝 Log this week's sets with RPE to start getting adjusted suggestions next week</div>`;
+  }
+  return `<div style="padding:10px 14px;background:#111;border-radius:8px;margin-bottom:8px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:13px;color:#888;">${refLabel} <strong style="color:#fff;">${refValue}</strong></span>
+      <span style="font-size:16px;font-weight:700;color:#666;">${planned} lbs</span>
+    </div>
+    ${suggestBlock}
+  </div>`;
 }
 function daysSinceBackup(){
   if(!state.lastBackup) return Infinity;
@@ -767,34 +773,7 @@ function renderDay(){
         </div>
         ${day.mainLiftNote?`<div style="font-size:12px;color:#888;font-style:italic;margin-bottom:8px;">${day.mainLiftNote}</div>`:""}
         ${pw
-          ?(()=>{
-              const mainBaseline=getBaselineFromSets(`Main_${day.mainLift}`,currentDay,currentWeek);
-              let suggestBlock="";
-              if(mainBaseline){
-                let adjusted=pw, note, noteColor="#888";
-                if(mainBaseline.avgRPE!=null){
-                  if(mainBaseline.avgRPE<=6.5){ adjusted=pw+5; note=`Last week felt easy (RPE ${mainBaseline.avgRPE.toFixed(1)}) — nudged +5 lbs above plan`; noteColor="#4ade80"; }
-                  else if(mainBaseline.avgRPE>=9){ adjusted=pw-5; note=`Last week was a grind (RPE ${mainBaseline.avgRPE.toFixed(1)}) — nudged -5 lbs below plan. OK to stay at the planned weight instead and just focus on bar speed.`; noteColor="#ff8c42"; }
-                  else { note=`Last week RPE ${mainBaseline.avgRPE.toFixed(1)} — right on target, sticking with the plan`; noteColor="#888"; }
-                } else {
-                  note=`Last logged: ${mainBaseline.weight} lbs (Wk ${mainBaseline.week}) — no RPE recorded, so no adjustment applied`;
-                }
-                suggestBlock=`<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid #222;">
-                  <span style="font-size:13px;color:${day.color};font-weight:700;">This Week's Suggestion</span>
-                  <span style="font-size:24px;font-weight:900;color:${day.color};">${adjusted} lbs</span>
-                </div>
-                <div style="font-size:11px;color:${noteColor};margin-top:4px;">${note}</div>`;
-              } else {
-                suggestBlock=`<div style="font-size:11px;color:#555;margin-top:8px;padding-top:8px;border-top:1px solid #222;font-style:italic;">📝 Log this week's sets with RPE to start getting adjusted suggestions next week</div>`;
-              }
-              return `<div style="padding:10px 14px;background:#111;border-radius:8px;margin-bottom:8px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span style="font-size:13px;color:#888;">Planned (Wave, 1RM: <strong style="color:#fff;">${orm} lbs</strong>)</span>
-                  <span style="font-size:16px;font-weight:700;color:#666;">${pw} lbs</span>
-                </div>
-                ${suggestBlock}
-              </div>`;
-            })()
+          ?renderPlannedSuggestionBlock(pw, "Planned (Wave, 1RM:", `${orm} lbs)`, day.color, getBaselineFromSets(`Main_${day.mainLift}`,currentDay,currentWeek), 5)
           :`<div style="padding:10px;background:#1a1a1a;border-radius:8px;color:#888;font-size:13px;text-align:center;margin-bottom:8px;">⚠️ No 1RM for ${day.mainLift} — set it in the 1RM Calc tab</div>`
         }
         ${renderSetLogger(mainKey, mainSets, day.color, mainSid)}
@@ -810,8 +789,6 @@ function renderDay(){
   let accHTML="";
   day.accessory.forEach(ex=>{
     if(ex.group) accHTML+=`<div class="group-label">${ex.group}</div>`;
-    const aOrm=ex.liftKey?state.orms[ex.liftKey]:null;
-    const apw=aOrm&&ex.pct?workingWeight(aOrm,ex.pct):null;
     const tags=(ex.muscles||[]).map(m=>mtag(m)).join("");
     const dSets=computeSets(ex,wave);
     const setsChanged=dSets!==ex.sets;
@@ -820,8 +797,37 @@ function renderDay(){
     const tipHTML=ex.tip?`<div style="font-size:11px;color:#ff8c42;font-style:italic;margin-top:5px;">${ex.tip}</div>`:"";
     const exKey=logKey(currentWeek,currentDay,ex.name);
 
-    let suggestionHTML="";
-    if(!ex.liftKey){
+    if(ex.liftKey){
+      // Tied to its own 1RM — same Planned/Suggestion treatment as a main lift,
+      // and now actually eases off on deload weeks too (it never did before —
+      // it was flat-locked to a fixed % of 1RM with zero adjustment, deload or not).
+      const aOrm=state.orms[ex.liftKey];
+      const effectivePct=isDeload?ex.pct*0.85:ex.pct;
+      const apw=aOrm?workingWeight(aOrm,effectivePct):null;
+      const baseline=getBaselineFromSets(ex.name,currentDay,currentWeek);
+      accHTML+=`<div class="ex-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+          <div style="flex:1;min-width:160px;">
+            <div class="ex-name">${ex.name}</div>
+            <div class="ex-note">${ex.note}</div>
+            <div style="margin-top:5px;">${tags}</div>
+            ${tipHTML}
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex-shrink:0;">
+            <span style="font-size:13px;color:${setsChanged?"#7c7cff":"#aaa"};background:#222;padding:3px 10px;border-radius:6px;">${dSets}×${ex.reps}${setsChanged?" 💚":""}</span>
+            <button class="rest-btn" id="${restId}" data-label="⏱ Rest ${restTime(ex.reps)}" onclick="startRestTimer('${restId}',${restSeconds(ex.reps)})">⏱ Rest ${restTime(ex.reps)}</button>
+          </div>
+        </div>
+        ${apw
+          ?renderPlannedSuggestionBlock(apw, "Planned (1RM:", `${aOrm} lbs)`, day.color, baseline, incrementFor(ex))
+          :`<div style="padding:10px;background:#1a1a1a;border-radius:8px;color:#888;font-size:13px;text-align:center;margin-bottom:8px;">⚠️ No 1RM for ${ex.liftKey} — set it in the 1RM Calc tab</div>`
+        }
+        ${renderSetLogger(exKey, dSets, day.color, sid)}
+      </div>`;
+    } else {
+      // Plain accessory — no fixed 1RM target, so progression compares against its
+      // own last logged weight instead of a wave-based plan.
+      let suggestionHTML="";
       if(isTimeBased(ex)){
         suggestionHTML=`<div style="font-size:11px;color:#4ade80;margin-top:5px;">📈 Progress by adding 5-10 sec once the full time feels solid — don't add load first.</div>`;
       } else {
@@ -844,25 +850,23 @@ function renderDay(){
           suggestionHTML=`<div style="font-size:11px;color:#555;margin-top:5px;font-style:italic;">📝 Log this week to start tracking progression</div>`;
         }
       }
+      accHTML+=`<div class="ex-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px;">
+          <div style="flex:1;min-width:160px;">
+            <div class="ex-name">${ex.name}</div>
+            <div class="ex-note">${ex.note}</div>
+            <div style="margin-top:5px;">${tags}</div>
+            ${suggestionHTML}
+            ${tipHTML}
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex-shrink:0;">
+            <span style="font-size:13px;color:${setsChanged?"#7c7cff":"#aaa"};background:#222;padding:3px 10px;border-radius:6px;">${dSets}×${ex.reps}${setsChanged?" 💚":""}</span>
+            <button class="rest-btn" id="${restId}" data-label="⏱ Rest ${restTime(ex.reps)}" onclick="startRestTimer('${restId}',${restSeconds(ex.reps)})">⏱ Rest ${restTime(ex.reps)}</button>
+          </div>
+        </div>
+        ${renderSetLogger(exKey, dSets, day.color, sid)}
+      </div>`;
     }
-
-    accHTML+=`<div class="ex-card">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px;">
-        <div style="flex:1;min-width:160px;">
-          <div class="ex-name">${ex.name}</div>
-          <div class="ex-note">${ex.note}</div>
-          <div style="margin-top:5px;">${tags}</div>
-          ${suggestionHTML}
-          ${tipHTML}
-        </div>
-        <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex-shrink:0;">
-          <span style="font-size:13px;color:${setsChanged?"#7c7cff":"#aaa"};background:#222;padding:3px 10px;border-radius:6px;">${dSets}×${ex.reps}${setsChanged?" 💚":""}</span>
-          ${apw?`<span style="font-size:13px;color:${day.color};font-weight:700;">${apw} lbs</span>`:""}
-          <button class="rest-btn" id="${restId}" data-label="⏱ Rest ${restTime(ex.reps)}" onclick="startRestTimer('${restId}',${restSeconds(ex.reps)})">⏱ Rest ${restTime(ex.reps)}</button>
-        </div>
-      </div>
-      ${renderSetLogger(exKey, dSets, day.color, sid)}
-    </div>`;
   });
 
   const noteKey=`w${currentWeek}_d${currentDay}`;
@@ -1069,9 +1073,9 @@ function renderSavedORMs(){
 // ═══════════════════════════════════════════════════════════════
 // Maps each main lift to where its real logged performance lives, so the Progress
 // tab can show "Actual" next to "Target". Front Squat has no dedicated main-lift day
-// (it's an accessory item tied to its own 1RM), so it reads straight from Day 2's
-// accessory log instead of a "Main_" key. Back Squat trains on both Day 2 (heavy,
-// wave-loaded) and Day 5 (lighter/speed) — Day 2 is the true progression signal.
+// (it's an accessory item tied to its own 1RM), so it reads straight from Day 1's
+// accessory log instead of a "Main_" key. Back Squat trains on both Day 1 (heavy,
+// wave-loaded) and Day 5 (lighter/speed) — Day 1 is the true progression signal.
 const MAIN_LIFT_SOURCE = {
   "Back Squat":      {dayIdx:0, keyName:"Main_Back Squat"},
   "Deadlift":        {dayIdx:2, keyName:"Main_Deadlift"},
