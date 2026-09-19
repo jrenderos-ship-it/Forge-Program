@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#e85d04">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
-<title>FORGE — 17-Week Program</title>
+<title>FORGE — 15-Week Program</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { font-family: -apple-system, 'Inter', 'Helvetica Neue', sans-serif; background: #0f0f0f; color: #f0f0f0; min-height: 100vh; }
@@ -84,7 +84,7 @@
     <div>
       <div style="display:flex;align-items:baseline;gap:10px;">
         <span class="logo">FORGE</span>
-        <span class="logo-sub">17-Week Program</span>
+        <span class="logo-sub">15-Week Program</span>
       </div>
       <div class="subtitle">Strength · Hypertrophy · Leg Growth — Wave Loading</div>
     </div>
@@ -152,7 +152,7 @@
 
   <!-- PROGRESS TAB -->
   <div id="tab-progress" class="hidden">
-    <h3 style="color:#fff;font-size:18px;font-weight:800;margin-bottom:4px;">17-Week Loading Plan</h3>
+    <h3 style="color:#fff;font-size:18px;font-weight:800;margin-bottom:4px;">15-Week Loading Plan</h3>
     <p style="color:#888;font-size:13px;margin-bottom:16px;">Projected working weights based on your saved 1RMs.</p>
     <div id="progress-content"></div>
   </div>
@@ -248,11 +248,11 @@
 // ═══════════════════════════════════════════════════════════════
 const MAIN_LIFTS = ["Back Squat","Deadlift","Bench Press","Overhead Press","Front Squat"];
 
-// 17-week block (Sept 1 – Dec 31). First half keeps standard 3-build/1-deload
-// mesocycles while you're fresh; the back half shortens to 2-build/1-deload —
-// fatigue compounds over a long block, so recovery weeks come more often as
-// the program goes on, not on a flat, unchanging cadence. Still 5 total light
-// weeks (4, 8, 11, 14, 17) — just better spaced for a realistic long-haul block.
+// 15-week block (Sept 21 – Dec 31, 2026 — 102 days, ≈14.6 weeks, rounded to 15).
+// Same philosophy as before: standard 3-build/1-deload while fresh, shortening to
+// 2-build/1-deload later as fatigue compounds, ending on a Peak week and a final
+// Test & Deload week that lands right at the end of the block. 5 total light weeks
+// (4, 8, 11, 14, 15) — same recovery cadence, just fit to the shorter span.
 const WAVES = [
   {week:1,label:"Week 1 — Foundation",sets:4,reps:"8",pct:0.65,deload:false,test:false},
   {week:2,label:"Week 2 — Build",sets:4,reps:"7",pct:0.70,deload:false,test:false},
@@ -267,10 +267,8 @@ const WAVES = [
   {week:11,label:"Week 11 — Deload",sets:3,reps:"4",pct:0.65,deload:true,test:false},
   {week:12,label:"Week 12 — Reload",sets:4,reps:"4",pct:0.78,deload:false,test:false},
   {week:13,label:"Week 13 — Overload",sets:5,reps:"3",pct:0.85,deload:false,test:false},
-  {week:14,label:"Week 14 — Deload",sets:3,reps:"4",pct:0.68,deload:true,test:false},
-  {week:15,label:"Week 15 — Build",sets:4,reps:"3",pct:0.83,deload:false,test:false},
-  {week:16,label:"Week 16 — Peak",sets:3,reps:"2",pct:0.90,deload:true,test:false},
-  {week:17,label:"Week 17 — Test & Deload",sets:1,reps:"1",pct:1.00,deload:true,test:true},
+  {week:14,label:"Week 14 — Peak",sets:3,reps:"2",pct:0.90,deload:true,test:false},
+  {week:15,label:"Week 15 — Test & Deload",sets:1,reps:"1",pct:1.00,deload:true,test:true},
 ];
 
 const MT = {
@@ -663,8 +661,8 @@ function renderWeekBtns(){
 }
 function renderWeekInfo(){
   const w=WAVES[currentWeek-1];
-  const holidayNote=currentWeek>=11
-    ?`<div style="margin-top:8px;font-size:12px;color:#facc15;line-height:1.6;">🦃🎄 This stretch of the program (roughly Weeks 11-17) runs through Thanksgiving, Christmas, and New Year's. If this specific real-world week lands on a holiday or travel, it's completely fine to treat it as a bonus deload — just use a nearby deload week's numbers instead — rather than forcing the table.</div>`
+  const holidayNote=currentWeek>=9
+    ?`<div style="margin-top:8px;font-size:12px;color:#facc15;line-height:1.6;">🦃🎄 Starting around Week 9-10 this program runs through Thanksgiving, then Christmas and New Year's near the end (Weeks 14-15). If this specific real-world week lands on a holiday or travel, it's completely fine to treat it as a bonus deload — just use a nearby deload week's numbers instead — rather than forcing the table.</div>`
     :"";
   document.getElementById("week-info").innerHTML=`
     <span style="font-size:14px;font-weight:700;color:#fff;">${w.label}</span>
