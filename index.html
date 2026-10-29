@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#e85d04">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
-<title>FORGE — 15-Week Program</title>
+<title>FORGE — Nov 2–Dec 31 Program</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { font-family: -apple-system, 'Inter', 'Helvetica Neue', sans-serif; background: #0f0f0f; color: #f0f0f0; min-height: 100vh; }
@@ -84,7 +84,7 @@
     <div>
       <div style="display:flex;align-items:baseline;gap:10px;">
         <span class="logo">FORGE</span>
-        <span class="logo-sub">15-Week Program</span>
+        <span class="logo-sub">Nov 2 – Dec 31</span>
       </div>
       <div class="subtitle">Strength · Hypertrophy · Leg Growth — Wave Loading</div>
     </div>
@@ -152,7 +152,7 @@
 
   <!-- PROGRESS TAB -->
   <div id="tab-progress" class="hidden">
-    <h3 style="color:#fff;font-size:18px;font-weight:800;margin-bottom:4px;">15-Week Loading Plan</h3>
+    <h3 style="color:#fff;font-size:18px;font-weight:800;margin-bottom:4px;">Loading Plan · Nov 2 – Dec 31</h3>
     <p style="color:#888;font-size:13px;margin-bottom:16px;">Projected working weights based on your saved 1RMs.</p>
     <div id="progress-content"></div>
   </div>
@@ -231,12 +231,11 @@
     <div class="card" style="border:1px solid #ff444466;margin-top:16px;">
       <div style="font-size:14px;font-weight:800;color:#ff8c42;margin-bottom:4px;">⚠️ Reset Program Progress</div>
       <p style="font-size:12px;color:#888;margin-bottom:12px;line-height:1.6;">
-        Jumps you back to <strong style="color:#fff;">Week 1, Day 1</strong> and clears your Mark Complete/Skip history —
-        for starting a new training block. Your 1RMs, logged weights, notes, and bodyweight history are
-        <strong style="color:#fff;">NOT deleted</strong> — progression suggestions will still reference your past
-        performance where relevant.
+        Starts a new block at <strong style="color:#fff;">Week 1, Day 1</strong> (Nov 2 – Dec 31) and clears your Mark Complete/Skip history.
+        Old logged weights are <strong style="color:#fff;">archived, not deleted</strong> — they seed your Week 1 suggestions by exercise name.
+        1RMs, notes and bodyweight history are kept. Run a Backup first.
       </p>
-      <button onclick="resetProgramProgress()" style="width:100%;padding:11px;background:#3a1a0a;border:1px solid #ff8c42;border-radius:8px;color:#ff8c42;font-size:14px;font-weight:700;cursor:pointer;">Reset to Week 1, Day 1</button>
+      <button onclick="resetProgramProgress()" style="width:100%;padding:11px;background:#3a1a0a;border:1px solid #ff8c42;border-radius:8px;color:#ff8c42;font-size:14px;font-weight:700;cursor:pointer;">Start New Block (Week 1, Day 1)</button>
     </div>
   </div>
 
@@ -246,13 +245,15 @@
 // ═══════════════════════════════════════════════════════════════
 // DATA
 // ═══════════════════════════════════════════════════════════════
-const MAIN_LIFTS = ["Back Squat","Deadlift","Bench Press","Overhead Press","Front Squat"];
+const MAIN_LIFTS = ["Back Squat","Deadlift","Bench Press","Overhead Press","Front Squat","Power Clean","Power Snatch"];
 
-// 15-week block (Sept 21 – Dec 31, 2026 — 102 days, ≈14.6 weeks, rounded to 15).
-// Same philosophy as before: standard 3-build/1-deload while fresh, shortening to
-// 2-build/1-deload later as fatigue compounds, ending on a Peak week and a final
-// Test & Deload week that lands right at the end of the block. 5 total light weeks
-// (4, 8, 11, 14, 15) — same recovery cadence, just fit to the shorter span.
+// Block: Mon Nov 2 – Thu Dec 31, 2026 (60 days = 8 full weeks + a 4-day finishing week).
+// Two 3-build + 1-deload cycles, then a short Test week.
+//   Wk1 Nov 2   Wk2 Nov 9   Wk3 Nov 16   Wk4 Nov 23 (deload — Thanksgiving Thu Nov 26)
+//   Wk5 Nov 30  Wk6 Dec 7   Wk7 Dec 14   Wk8 Dec 21 (deload — Christmas Fri Dec 25)
+//   Wk9 Dec 28 – Dec 31 (Mon-Thu only): retest Squat / Bench / Deadlift 1RMs.
+const BLOCK_START="2026-11-02";
+const BLOCK_LABEL="Nov 2 – Dec 31, 2026";
 const WAVES = [
   {week:1,label:"Week 1 — Foundation",sets:4,reps:"8",pct:0.65,deload:false,test:false},
   {week:2,label:"Week 2 — Build",sets:4,reps:"7",pct:0.70,deload:false,test:false},
@@ -262,14 +263,14 @@ const WAVES = [
   {week:6,label:"Week 6 — Build",sets:4,reps:"5",pct:0.75,deload:false,test:false},
   {week:7,label:"Week 7 — Overload",sets:5,reps:"4",pct:0.80,deload:false,test:false},
   {week:8,label:"Week 8 — Deload",sets:3,reps:"5",pct:0.62,deload:true,test:false},
-  {week:9,label:"Week 9 — Reload",sets:4,reps:"5",pct:0.75,deload:false,test:false},
-  {week:10,label:"Week 10 — Overload",sets:5,reps:"4",pct:0.82,deload:false,test:false},
-  {week:11,label:"Week 11 — Deload",sets:3,reps:"4",pct:0.65,deload:true,test:false},
-  {week:12,label:"Week 12 — Reload",sets:4,reps:"4",pct:0.78,deload:false,test:false},
-  {week:13,label:"Week 13 — Overload",sets:5,reps:"3",pct:0.85,deload:false,test:false},
-  {week:14,label:"Week 14 — Peak",sets:3,reps:"2",pct:0.90,deload:true,test:false},
-  {week:15,label:"Week 15 — Test & Deload",sets:1,reps:"1",pct:1.00,deload:true,test:true},
+  {week:9,label:"Week 9 — Test (Mon–Thu)",sets:1,reps:"1",pct:1.00,deload:true,test:true},
 ];
+function weekDates(week){
+  const s=new Date(BLOCK_START+"T12:00:00"); s.setDate(s.getDate()+7*(week-1));
+  const e=new Date(s); e.setDate(e.getDate()+(week===WAVES.length?3:6));
+  const f=d=>d.toLocaleDateString("en-US",{month:"short",day:"numeric"});
+  return `${f(s)} – ${f(e)}`;
+}
 
 const MT = {
   Q:  {label:"Quads",     bg:"#1a2e4a", color:"#60a5fa"},
@@ -307,18 +308,20 @@ const DAYS = [
     }
   },
 
-  // ── DAY 2: Upper Body — Chest / Shoulders / Triceps ────────
+  // ── DAY 2: Upper Body — Chest / Back / Shoulders / Arms ────
   {
-    day:"Day 2", type:"Upper Body", focus:"Chest · Shoulders · Triceps — Hypertrophy",
+    day:"Day 2", type:"Upper Body", focus:"Chest · Back · Shoulders · Arms — Hypertrophy",
     color:"#2b9348", icon:"💪", mainLift:"Bench Press",
-    hypertrophyNote:"8–15 reps, 60–90 sec rest. Focus on the muscle, not the weight. Slow eccentrics (3 sec down), full ROM, feel every rep.",
+    hypertrophyNote:"8–15 reps, 60–90 sec rest. This is now your ONLY upper-body hypertrophy day — make every set count. Slow eccentrics (3 sec down), full ROM, feel the target muscle on every rep. Keep rests tight so the session stays ~75 min.",
     volSummary:[
-      {label:"Chest",color:"#f87171"},{label:"Shoulders",color:"#facc15"},{label:"Triceps",color:"#2dd4bf"}
+      {label:"Chest",color:"#f87171"},{label:"Back",color:"#38bdf8"},{label:"Shoulders",color:"#facc15"},{label:"Biceps",color:"#fb923c"},{label:"Triceps",color:"#2dd4bf"}
     ],
     accessory:[
       {name:"DB Incline Press", sets:4, reps:"10-12", note:"3-sec eccentric — full stretch at bottom, drive up explosively", muscles:["Ch","Sh"]},
-      {name:"Overhead Press (Barbell)", sets:3, reps:"8", note:"70% of OHP 1RM — strict press, control the descent", liftKey:"Overhead Press", pct:0.70, muscles:["Sh","Tr"]},
+      {name:"Cable Seated Row", sets:4, reps:"12", note:"Full stretch forward, full retraction — feel both ends of the ROM", muscles:["Bk"]},
+      {name:"Lat Pulldown (Cable/Machine)", sets:4, reps:"10-12", note:"Wide grip, drive elbows down and back, full stretch at top — vertical pull for lat width", muscles:["Bk"]},
       {name:"DB Lateral Raises", sets:4, reps:"15", note:"Lead with elbow, slight lean forward, pause at top", muscles:["Sh"]},
+      {name:"Barbell Curl", sets:4, reps:"10", note:"Full ROM, no swinging, 3-sec eccentric — supinate at top", muscles:["Bi"]},
       {name:"Cable Tricep Pushdown (Rope)", sets:4, reps:"12", note:"Split rope at bottom, full extension, elbows pinned to sides", muscles:["Tr"]},
     ],
     conditioning:{
@@ -349,24 +352,27 @@ const DAYS = [
     }
   },
 
-  // ── DAY 4: Upper Body — Back / Biceps / Rear Delts ─────────
+  // ── DAY 4: Olympic Lifting — Power Snatch / Power Clean / Push Press ─────
   {
-    day:"Day 4", type:"Upper Body", focus:"Back · Biceps · Rear Delts — Hypertrophy",
-    color:"#1d6fa4", icon:"🏋️", mainLift:"Overhead Press",
-    hypertrophyNote:"8–15 reps, 60–90 sec rest. Focus on the mind-muscle connection — feel the back and biceps doing the work on every pull. Slow eccentrics, full ROM.",
+    day:"Day 4", type:"Olympic Lifting", focus:"Power Snatch · Power Clean · Push Press",
+    color:"#1d6fa4", icon:"⚡", mainLift:null,
+    banner:"⚡ <strong>Oly Protocol:</strong> Technique and bar speed first. Reset the bar after every rep, stop a set the moment speed or bar path degrades — never grind. Thursday's deadlifts and Saturday's legs sit on either side of today, so stay in the 55–78% range. Rest 2–3 min between Oly sets.",
+    noMainNote:"⚡ Olympic day — no wave-loaded main lift. The Power Snatch and Power Clean below are your priority lifts: do them first, while you're fresh.",
+    warmup:"5 min easy row → 2 rounds: 10 PVC/dowel pass-throughs, 8 slow overhead squats (PVC), 10 scap push-ups, 10 hip hinges, 30 sec each side couch stretch → Barbell: empty bar ×5 each of high pull, hang power clean, hang power snatch → then 40%×3, 55%×2 on the first lift",
     volSummary:[
-      {label:"Back",color:"#38bdf8"},{label:"Biceps",color:"#fb923c"},{label:"Shoulders",color:"#facc15"}
+      {label:"Power",color:"#38bdf8"},{label:"Shoulders",color:"#facc15"},{label:"Back",color:"#38bdf8"},{label:"Core",color:"#4ade80"}
     ],
     accessory:[
-      {name:"Cable Seated Row", sets:4, reps:"12", note:"Full stretch forward, full retraction — feel both ends of the ROM", muscles:["Bk"]},
-      {name:"Lat Pulldown (Cable/Machine)", sets:4, reps:"10-12", note:"Wide grip, drive elbows down and back, full stretch at top — the vertical pull your rows alone can't replicate for lat width", muscles:["Bk"]},
-      {name:"Cable Face Pull", sets:4, reps:"15", note:"Elbows high, external rotation at peak — shoulder health priority", muscles:["Sh","Bk"]},
-      {name:"Barbell Curl", sets:4, reps:"10", note:"Full ROM, no swinging, 3-sec eccentric — supinate at top", muscles:["Bi"]},
+      {name:"Power Snatch", sets:5, reps:"2", note:"Catch above parallel, bar close, fast under. Rusty? Keep it light — rebuild the pattern first. Enter a conservative 1RM (what you could snatch cleanly TODAY, not your old PR).", liftKey:"Power Snatch", pct:0.60, pctByWeek:[0.60,0.62,0.65,0.55,0.65,0.68,0.70,0.58], inc:5, muscles:["Sh","Bk"]},
+      {name:"Power Clean", sets:5, reps:"2", note:"Aggressive 2nd pull, elbows fast around the bar, catch in a quarter squat. Same rule: conservative 1RM, perfect reps over heavy reps.", liftKey:"Power Clean", pct:0.65, pctByWeek:[0.65,0.68,0.70,0.60,0.72,0.75,0.78,0.62], inc:5, muscles:["Bk","H"]},
+      {name:"Push Press", sets:4, reps:"5", note:"~80% of your strict OHP 1RM — dip straight down, drive hard, lock out overhead, control the descent. Replaces the old strict OHP.", liftKey:"Overhead Press", pct:0.80, inc:5, muscles:["Sh","Tr"]},
+      {name:"Cable Face Pull", sets:3, reps:"15", note:"Elbows high, external rotation at peak — shoulder health after all the overhead work", muscles:["Sh","Bk"]},
+      {name:"Cable Crunch", sets:3, reps:"15", note:"Round the spine, hips still, exhale hard at the bottom", muscles:["C"]},
     ],
     conditioning:{
-      format:"12-Min Finisher", desc:"AMRAP 12 min — Low Intensity",
-      workouts:["10 DB Bicep Curls (light)","10 Cable Face Pulls","200m Row (easy pace)","Rest as needed — this is a flush, not a workout"],
-      equipment:"DB, Cable, Rower", intensity:"Light", duration:"~12 min"
+      format:"8-Min Cooldown", desc:"Easy flush — overhead & hip mobility, no conditioning",
+      workouts:["4 min easy row or bike","2 rounds: 30 sec lat/overhead stretch each side, 30 sec couch stretch each side","Keep it relaxed — Saturday is a big leg day"],
+      equipment:"Rower/Bike", intensity:"Light", duration:"~8 min"
     }
   },
 
@@ -403,7 +409,7 @@ const DAY_ORDER = [0,1,2,3,4];
 // STATE
 // ═══════════════════════════════════════════════════════════════
 const LS_KEY="forge_v7"; // unchanged on purpose — preserves all prior saved data
-let state={orms:{},logs:{},setLogs:{},notes:{},bodyweight:{},lastBackup:null,progress:{week:1,day:0,completed:{}}};
+let state={orms:{},logs:{},setLogs:{},notes:{},bodyweight:{},lastBackup:null,progress:{week:1,day:0,completed:{}},archive:{blocks:[]}};
 let currentWeek=1,currentDay=0,calcORM=0;
 let restTimers={};
 
@@ -412,7 +418,8 @@ function loadState(){
     const d=localStorage.getItem(LS_KEY);
     if(d){
       const parsed=JSON.parse(d);
-      state=Object.assign({orms:{},logs:{},setLogs:{},notes:{},bodyweight:{},lastBackup:null,progress:{week:1,day:0,completed:{}}}, parsed);
+      state=Object.assign({orms:{},logs:{},setLogs:{},notes:{},bodyweight:{},lastBackup:null,progress:{week:1,day:0,completed:{}},archive:{blocks:[]}}, parsed);
+      if(!state.archive||!Array.isArray(state.archive.blocks)) state.archive={blocks:[]};
       if(!state.progress) state.progress={week:1,day:0,completed:{}};
       if(!state.progress.completed) state.progress.completed={};
     }
@@ -465,6 +472,12 @@ function migrateLegacyLogs(){
 // ═══════════════════════════════════════════════════════════════
 function epley(w,r){ if(!w||!r||r<1) return 0; if(r===1) return w; return Math.round(w*(1+r/30)); }
 function workingWeight(orm,pct){ return Math.round((orm*pct)/2.5)*2.5; }
+// Percent of 1RM for a liftKey accessory in a given week. Oly lifts carry their own
+// weekly ramp (pctByWeek); everything else uses a fixed pct eased 15% on deload weeks.
+function liftPctForWeek(ex,week){
+  if(ex.pctByWeek && ex.pctByWeek[week-1]!=null) return ex.pctByWeek[week-1];
+  return WAVES[week-1].deload ? ex.pct*0.85 : ex.pct;
+}
 function logKey(w,d,n){ return `w${w}_d${d}_${n.replace(/\W/g,"_")}`; }
 function safeId(n){ return n.replace(/\W/g,"_"); }
 function iColor(i){ if(i==="Very Hard") return "#ff4444"; if(i==="Moderate") return "#ffcc00"; return "#4ade80"; }
@@ -492,6 +505,7 @@ function computeSets(ex,wave){
 }
 function isTimeBased(ex){ return /sec|hold/i.test(ex.reps) || /Plank|Deadbug/i.test(ex.name); }
 function incrementFor(ex){
+  if(ex.inc) return ex.inc;
   const m=String(ex.reps).match(/\d+/);
   const n=m?parseInt(m[0]):12;
   return n<=8 ? 10 : 5;
@@ -512,6 +526,32 @@ function getBaselineFromSets(exName,dayIdx,uptoWeek){
       }
     }
     if(state.logs[key]) return {week:w, weight:parseFloat(state.logs[key]), avgRPE:null};
+  }
+  return getArchivedBaseline(exName);
+}
+// When a new block starts, last block's logs are archived (not deleted). If the current
+// block has no earlier data for an exercise, fall back to the most recent archived
+// performance — matched by exercise NAME (not day/week), so it survives day changes.
+function getArchivedBaseline(exName){
+  const target=exName.replace(/\W/g,"_");
+  const blocks=(state.archive&&state.archive.blocks)||[];
+  for(let b=blocks.length-1; b>=0; b--){
+    const blk=blocks[b], dl=blk.deloadWeeks||[];
+    let best=null;
+    Object.keys(blk.setLogs||{}).forEach(key=>{
+      const m=key.match(/^w(\d+)_d(\d+)_(.*)$/);
+      if(!m||m[3]!==target) return;
+      const w=parseInt(m[1]);
+      if(dl.includes(w)) return;
+      const sets=blk.setLogs[key]||[];
+      const weights=sets.map(s=>parseFloat(s.w)).filter(v=>!isNaN(v));
+      if(!weights.length) return;
+      if(!best||w>best.week){
+        const rpes=sets.map(s=>parseFloat(s.rpe)).filter(v=>!isNaN(v));
+        best={week:w, weight:Math.max(...weights), avgRPE:rpes.length?rpes.reduce((a,c)=>a+c,0)/rpes.length:null, archived:true};
+      }
+    });
+    if(best) return best;
   }
   return null;
 }
@@ -661,11 +701,17 @@ function renderWeekBtns(){
 }
 function renderWeekInfo(){
   const w=WAVES[currentWeek-1];
-  const holidayNote=currentWeek>=9
-    ?`<div style="margin-top:8px;font-size:12px;color:#facc15;line-height:1.6;">🦃🎄 Starting around Week 9-10 this program runs through Thanksgiving, then Christmas and New Year's near the end (Weeks 14-15). If this specific real-world week lands on a holiday or travel, it's completely fine to treat it as a bonus deload — just use a nearby deload week's numbers instead — rather than forcing the table.</div>`
+  const holidayMsg={
+    4:"🦃 Thanksgiving week (Thu Nov 26) — this is your deload anyway. Keep it light and enjoy it.",
+    8:"🎄 Christmas week (Fri Dec 25) — deload week. If a day gets skipped for family time, just mark it Skipped and move on.",
+    9:"🎆 Short finishing week (Mon Dec 28 – Thu Dec 31): test Back Squat Mon, Bench Tue, Deadlift Thu. Work up in singles, stop at a true max with good form, then update your 1RMs in the Calculator."
+  }[currentWeek];
+  const holidayNote=holidayMsg
+    ?`<div style="margin-top:8px;font-size:12px;color:#facc15;line-height:1.6;">${holidayMsg}</div>`
     :"";
   document.getElementById("week-info").innerHTML=`
     <span style="font-size:14px;font-weight:700;color:#fff;">${w.label}</span>
+    <span style="font-size:12px;color:#666;margin-left:8px;">${weekDates(currentWeek)}</span>
     <span style="font-size:12px;color:#888;margin-left:10px;">${w.test?"Max out — retest your 1RMs":`Main lifts: ${w.sets}×${w.reps} @ ${Math.round(w.pct*100)}% 1RM`}</span>
     ${w.deload?`<span class="badge" style="background:#1a3a1a;color:#4ade80;margin-left:8px;">${w.test?"TEST":"DELOAD"}</span>`:""}
     ${holidayNote}
@@ -702,7 +748,7 @@ function advanceToNextDay(){
   } else {
     currentDay=DAY_ORDER[0];
     if(currentWeek<WAVES.length){ currentWeek+=1; }
-    else { toast("🎉 10-week program complete! Great work.","#4ade80"); }
+    else { toast("🎉 Nov 2 – Dec 31 block complete! Great work.","#4ade80"); }
   }
   state.progress.week=currentWeek;
   state.progress.day=currentDay;
@@ -714,11 +760,22 @@ function jumpToCurrent(){
   renderWeekBtns(); renderWeekInfo(); renderDayBtns(); renderDay();
 }
 function resetProgramProgress(){
-  if(!confirm("Reset to Week 1, Day 1? This clears your Mark Complete/Skip history but keeps all your 1RMs, logged weights, notes, and bodyweight data. Continue?")) return;
+  if(!confirm("Start a new block at Week 1, Day 1? Your current logged weights are archived (not deleted) and used as starting references for matching exercises. Your 1RMs, notes and bodyweight history stay. Tip: use Backup first. Continue?")) return;
+  if(Object.keys(state.setLogs).length||Object.keys(state.logs).length){
+    state.archive.blocks.push({
+      label:state.blockLabel||"Previous block",
+      endedAt:new Date().toISOString(),
+      deloadWeeks:(state.prevDeloadWeeks||[4,8,11,14,15]), // first reset: the old 15-week table's deload weeks
+      logs:state.logs, setLogs:state.setLogs
+    });
+    state.logs={}; state.setLogs={};
+  }
+  state.blockLabel=BLOCK_LABEL;
+  state.prevDeloadWeeks=WAVES.filter(w=>w.deload).map(w=>w.week);
   state.progress={week:1, day:DAY_ORDER[0], completed:{}};
   saveState();
   currentWeek=1; currentDay=DAY_ORDER[0];
-  toast("✓ Reset to Week 1, Day 1 — your logged data is still here");
+  toast("✓ New block started — old logs archived as references");
   renderWeekBtns(); renderWeekInfo(); renderDayBtns(); renderDay();
   setTimeout(()=>showTab("program"),600);
 }
@@ -743,7 +800,7 @@ function renderDay(){
   renderResumeBanner();
 
   const volHTML=day.volSummary?`<div class="vol-summary">${day.volSummary.map(v=>`<span class="vol-pill" style="background:${v.color}22;color:${v.color};">${v.label}</span>`).join("")}</div>`:"";
-  const hypBanner=day.hypertrophyNote?`<div class="hyp-banner">💜 <strong>Hypertrophy Protocol:</strong> ${day.hypertrophyNote}</div>`:"";
+  const hypBanner=day.banner?`<div class="hyp-banner">${day.banner}</div>`:day.hypertrophyNote?`<div class="hyp-banner">💜 <strong>Hypertrophy Protocol:</strong> ${day.hypertrophyNote}</div>`:"";
 
   // ── Main lift block ──
   let mainSection="";
@@ -800,7 +857,7 @@ function renderDay(){
       // and now actually eases off on deload weeks too (it never did before —
       // it was flat-locked to a fixed % of 1RM with zero adjustment, deload or not).
       const aOrm=state.orms[ex.liftKey];
-      const effectivePct=isDeload?ex.pct*0.85:ex.pct;
+      const effectivePct=liftPctForWeek(ex,currentWeek);
       const apw=aOrm?workingWeight(aOrm,effectivePct):null;
       const baseline=getBaselineFromSets(ex.name,currentDay,currentWeek);
       accHTML+=`<div class="ex-card">
@@ -901,7 +958,7 @@ function renderDay(){
 
     <div style="margin-bottom:12px;">
       <div class="section-label" style="color:#666;">🔥 Warm-Up</div>
-      <div style="color:#aaa;font-size:13px;line-height:1.8;">5 min easy cardio (Rower or Assault Bike) → 2 rounds: 10 Hip Circles each side, 10 Leg Swings, 10 Glute Bridges, 10 World's Greatest Stretch → Barbell warm-up: empty bar×10, 40%×5, 55%×3</div>
+      <div style="color:#aaa;font-size:13px;line-height:1.8;">${day.warmup||"5 min easy cardio (Rower or Assault Bike) → 2 rounds: 10 Hip Circles each side, 10 Leg Swings, 10 Glute Bridges, 10 World's Greatest Stretch → Barbell warm-up: empty bar×10, 40%×5, 55%×3"}</div>
     </div>
 
     ${day.mainLift?`
@@ -911,7 +968,7 @@ function renderDay(){
     </div>
     `:`
     <div style="margin-bottom:12px;padding:10px 14px;background:#1a1a1a;border-radius:8px;border:1px solid #9333ea44;font-size:12px;color:#c084fc;">
-      🎯 No heavy main lift today — this is a pure hypertrophy/pump day. Go straight into accessory work below.
+      ${day.noMainNote||"🎯 No heavy main lift today — this is a pure hypertrophy/pump day. Go straight into accessory work below."}
     </div>
     `}
 
@@ -1078,9 +1135,13 @@ const MAIN_LIFT_SOURCE = {
   "Back Squat":      {dayIdx:0, keyName:"Main_Back Squat"},
   "Deadlift":        {dayIdx:2, keyName:"Main_Deadlift"},
   "Bench Press":     {dayIdx:1, keyName:"Main_Bench Press"},
-  "Overhead Press":  {dayIdx:3, keyName:"Main_Overhead Press"},
+  "Overhead Press":  {dayIdx:3, keyName:"Push Press"},      // OHP 1RM now drives Friday's Push Press
   "Front Squat":     {dayIdx:0, keyName:"Front Squat"},
+  "Power Clean":     {dayIdx:3, keyName:"Power Clean"},
+  "Power Snatch":    {dayIdx:3, keyName:"Power Snatch"},
 };
+// Lifts that follow their own plan (not the shared wave table) — shown with their real weekly %.
+const PLAN_EX = {"Overhead Press":"Push Press","Power Clean":"Power Clean","Power Snatch":"Power Snatch"};
 function getActualForWeek(lift,week){
   const src=MAIN_LIFT_SOURCE[lift];
   if(!src) return null;
@@ -1093,6 +1154,33 @@ function getActualForWeek(lift,week){
 function renderProgress(){
   document.getElementById("progress-content").innerHTML=MAIN_LIFTS.map(lift=>{
     const orm=state.orms[lift];
+    const planEx=PLAN_EX[lift]?DAYS[3].accessory.find(e=>e.name===PLAN_EX[lift]):null;
+    if(planEx){
+      return `<div class="card" style="margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <span style="font-weight:800;font-size:15px;color:#fff;">${lift}</span>
+          <span style="font-size:13px;color:${orm?"#e85d04":"#555"};">${orm?`1RM: ${orm} lbs`:"No 1RM saved"}</span>
+        </div>
+        <div style="font-size:11px;color:#888;margin-bottom:10px;">Tracked via Friday's <strong style="color:#ccc;">${planEx.name}</strong> (Oly Day)${lift==="Overhead Press"?" — strict OHP 1RM sets the push press weight":""}</div>
+        ${orm?`<div style="overflow-x:auto;"><table class="progress-table">
+          <thead><tr><th>Wk</th><th>Sets×Reps</th><th>%</th><th>Target</th><th>Actual</th><th>Phase</th></tr></thead>
+          <tbody>${WAVES.filter(w=>!w.test).map(w=>{
+            const pct=liftPctForWeek(planEx,w.week);
+            const target=workingWeight(orm,pct);
+            const actual=getActualForWeek(lift,w.week);
+            let actualHTML="—";
+            if(actual!=null){ const color=actual>=target?"#4ade80":actual>=target*0.9?"#facc15":"#ff8c42"; actualHTML=`<span style="color:${color};font-weight:700;">${actual} lbs</span>`; }
+            return `<tr style="background:${w.deload?"#0f0f1a":"transparent"};">
+              <td style="font-weight:700;color:${w.deload?"#7c7cff":"#fff"};">${w.week}</td>
+              <td style="color:#ccc;">${computeSets(planEx,w)}×${planEx.reps}</td>
+              <td style="color:#888;">${Math.round(pct*100)}%</td>
+              <td style="font-weight:700;color:#e85d04;">${target} lbs</td>
+              <td>${actualHTML}</td>
+              <td><span class="badge" style="background:${w.deload?"#7c7cff22":"#e85d0422"};color:${w.deload?"#7c7cff":"#e85d04"};">${w.deload?"DELOAD":"BUILD"}</span></td>
+            </tr>`;}).join("")}</tbody>
+        </table></div>`:`<div style="padding:12px;background:#111;border-radius:8px;color:#555;font-size:13px;text-align:center;">Save a 1RM in the calculator to see your loading plan</div>`}
+      </div>`;
+    }
     return `<div class="card" style="margin-bottom:12px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
         <span style="font-weight:800;font-size:15px;color:#fff;">${lift}</span>
@@ -1219,7 +1307,8 @@ function renderBackupSummary(){
 function showExport(){
   document.getElementById("export-text").value=JSON.stringify({
     orms:state.orms, logs:state.logs, setLogs:state.setLogs, notes:state.notes, bodyweight:state.bodyweight,
-    progress:state.progress, savedAt:new Date().toISOString(), v:9
+    progress:state.progress, archive:state.archive, blockLabel:state.blockLabel, prevDeloadWeeks:state.prevDeloadWeeks,
+    savedAt:new Date().toISOString(), v:10
   });
   document.getElementById("export-panel").classList.remove("hidden");
   document.getElementById("import-panel").classList.add("hidden");
@@ -1252,6 +1341,8 @@ function restoreBackup(){
       state.notes=p.notes||{};
       state.bodyweight=p.bodyweight||{};
       state.progress=p.progress||{week:1,day:0,completed:{}};
+      state.archive=(p.archive&&Array.isArray(p.archive.blocks))?p.archive:{blocks:[]};
+      state.blockLabel=p.blockLabel; state.prevDeloadWeeks=p.prevDeloadWeeks;
       migrateLegacyLogs();
       saveState();
       currentWeek=state.progress.week||1;
